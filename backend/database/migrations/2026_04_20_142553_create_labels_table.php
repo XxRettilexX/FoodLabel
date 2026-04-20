@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('labels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lot_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete(); // Audit
             $table->string('qr_code_path')->nullable();
             $table->string('barcode')->nullable();
             $table->timestamps();
