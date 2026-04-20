@@ -9,4 +9,10 @@ class Supplier extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\Suppliers\Models\SupplierFactory> */
     use HasFactory;
+
+    protected $fillable = ['name', 'contact_email', 'vat_number'];
+
+    public function products() { 
+        return $this->hasMany(\App\Models\Modules\Products\Models\Product::class); 
+    }
 }

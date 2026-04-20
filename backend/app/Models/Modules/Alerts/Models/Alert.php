@@ -9,4 +9,13 @@ class Alert extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\Alerts\Models\AlertFactory> */
     use HasFactory;
+
+    protected $fillable = ['lot_id', 'type', 'status', 'resolved_by'];
+
+    public function lot() { 
+        return $this->belongsTo(\App\Models\Modules\Lots\Models\Lot::class); 
+    }
+    public function resolver() { 
+        return $this->belongsTo(\App\Models\User::class, 'resolved_by'); 
+    }
 }

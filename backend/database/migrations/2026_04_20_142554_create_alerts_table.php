@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('lot_id')->constrained()->cascadeOnDelete();
             $table->string('type'); 
             $table->string('status')->default('pending');
+            $table->foreignId('resolved_by')->nullable()->constrained('users')->nullOnDelete(); // Audit
             $table->timestamps();
         });
     }
