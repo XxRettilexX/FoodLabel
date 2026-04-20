@@ -9,21 +9,28 @@ use App\Http\Controllers\Modules\Alerts\Controllers\AlertController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Modules\Auth\Controllers\AuthController;
+
 Route::prefix('v1')->group(function () {
-    // Auth routes placeholder (optional)
-    Route::post('/login', function() { return response()->json(['token' => 'placeholder']); });
+    // Auth routes
+    Route::post('/login', [AuthController::class, 'login']);
     
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/user', function (Request $request) {
-            return $request->user();
+        Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+
+        // Restricted to Admin & Manager
+        Route::middleware('role:admin,manager')->group(function () {
+            Route::apiResource('suppliers', SupplierController::class);
+            Route::apiResource('products', ProductController::class);
         });
 
-        // Domains
-        Route::apiResource('suppliers', SupplierController::class);
-        Route::apiResource('products', ProductController::class);
-        Route::apiResource('lots', LotController::class);
-        Route::apiResource('inventory-movements', InventoryMovementController::class);
-        Route::apiResource('labels', LabelController::class);
-        Route::apiResource('alerts', AlertController::class);
+        // Accessible to Operator, Manager, Admin
+        Route::middleware('role:admin,manager,operator')->group(function () {
+            Route::apiResource('lots', LotController::class);
+            Route::apiResource('inventory-movements', InventoryMovementController::class);
+            Route::apiResource('labels', LabelController::class);
+            Route::apiResource('alerts', AlertController::class);
+        });
     });
 });
