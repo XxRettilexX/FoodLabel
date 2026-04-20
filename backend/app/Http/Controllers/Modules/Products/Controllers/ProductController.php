@@ -3,48 +3,48 @@
 namespace App\Http\Controllers\Modules\Products\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Modules\Products\StoreProductRequest;
 use App\Models\Modules\Products\Models\Product;
+use App\Services\Modules\Products\ProductService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(protected ProductService $productService)
+    {}
+
     public function index()
     {
-        //
+        return response()->json(['data' => $this->productService->getAllProducts()]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        //
+        $product = $this->productService->createProduct($request->validated());
+        return response()->json(['data' => $product], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Product $product)
     {
-        //
+        $product->load('supplier', 'lots');
+        return response()->json(['data' => $product]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Product $product)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'supplier_id' => 'sometimes|nullable|exists:suppliers,id',
+            'description' => 'sometimes|nullable|string|max:1000',
+            'default_shelf_life_days' => 'sometimes|nullable|integer|min:1',
+        ]);
+        $product->update($validated);
+        return response()->json(['data' => $product]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return response()->json(null, 204);
     }
 }

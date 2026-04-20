@@ -27,6 +27,7 @@ Route::prefix('v1')->group(function () {
 
         // Accessible to Operator, Manager, Admin
         Route::middleware('role:admin,manager,operator')->group(function () {
+            Route::patch('lots/{lot}/status', [LotController::class, 'updateStatus']);
             Route::apiResource('lots', LotController::class);
             Route::apiResource('inventory-movements', InventoryMovementController::class);
             Route::apiResource('labels', LabelController::class);
