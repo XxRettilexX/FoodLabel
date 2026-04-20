@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('inventory_movements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lot_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete(); // Audit
             $table->enum('type', ['IN', 'OUT', 'ADJUST']);
             $table->decimal('quantity', 10, 2);
             $table->text('notes')->nullable();

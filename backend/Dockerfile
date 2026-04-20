@@ -14,7 +14,7 @@ RUN apk add --no-cache \
     $PHPIZE_DEPS
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo pdo_pgsql mbstring pcntl bcmath gd
 
 # Install Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
@@ -30,5 +30,6 @@ COPY . .
 # Set permissions
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Expose port 8000 and start php-fpm server via artisan serve or fpm
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
+# Expose port 9000 and start php-fpm
+EXPOSE 9000
+CMD ["php-fpm"]
