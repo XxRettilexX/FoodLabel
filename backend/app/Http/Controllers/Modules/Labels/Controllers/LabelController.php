@@ -3,48 +3,63 @@
 namespace App\Http\Controllers\Modules\Labels\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Modules\Labels\StoreLabelRequest;
 use App\Models\Modules\Labels\Models\Label;
+use App\Models\Modules\Lots\Models\Lot;
+use App\Services\Modules\Labels\LabelService;
 use Illuminate\Http\Request;
 
 class LabelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(protected LabelService $labelService)
+    {}
+
+    public function index(Request $request)
     {
-        //
+        $query = Label::with(['lot.product', 'printedBy']);
+        
+        if ($request->has('lot_id')) {
+            $query->where('lot_id', $request->query('lot_id'));
+        }
+
+        return response()->json(['data' => $query->latest()->paginate(20)]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreLabelRequest $request)
     {
-        //
+        try {
+            $lot = Lot::findOrFail($request->validated()['lot_id']);
+            $label = $this->labelService->generateLabelForLot($lot, $request->user()->id);
+            
+            return response()->json([
+                'data' => $this->labelService->getLabelPayload($label)
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Errore nella generazione etichetta: ' . $e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Label $label)
     {
-        //
+        return response()->json(['data' => $this->labelService->getLabelPayload($label)]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    public function printView(Label $label)
+    {
+        // Ritorna una semplice e pulita visuale HTML predisposta per la stampa via browser,
+        // contenente QR base64 e Barcode text.
+        $payload = $this->labelService->getLabelPayload($label);
+        return view('labels.print', ['payload' => $payload]);
+    }
+
     public function update(Request $request, Label $label)
     {
-        //
+        return response()->json(['message' => 'Etichetta immutabile. Generane una nuova.'], 405);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Label $label)
     {
-        //
+        $label->delete();
+        return response()->json(null, 204);
     }
 }

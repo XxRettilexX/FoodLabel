@@ -10,7 +10,7 @@ class Label extends Model
     /** @use HasFactory<\Database\Factories\Modules\Labels\Models\LabelFactory> */
     use HasFactory;
 
-    protected $fillable = ['lot_id', 'user_id', 'qr_code_path', 'barcode'];
+    protected $fillable = ['lot_id', 'user_id', 'label_code', 'qr_data', 'barcode'];
 
     public function lot() { 
         return $this->belongsTo(\App\Models\Modules\Lots\Models\Lot::class); 

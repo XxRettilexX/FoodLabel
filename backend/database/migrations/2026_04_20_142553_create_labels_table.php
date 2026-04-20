@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('lot_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete(); // Audit
-            $table->string('qr_code_path')->nullable();
+            $table->string('label_code')->unique();
+            $table->text('qr_data')->nullable(); // JSON or URL payload
             $table->string('barcode')->nullable();
             $table->timestamps();
         });
