@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: foodlabel_backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:80"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - haccp_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: foodlabel_frontend
+    restart: unless-stopped
+    ports:
+      - "19000:19000"
+      - "19001:19001"
+    depends_on:
+      - backend
+    networks:
+      - haccp_net
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: foodlabel_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: foodlabel_user
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: foodlabel_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - haccp_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: foodlabel_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - haccp_net
+
+networks:
+  haccp_net:
+    driver: bridge
+
+volumes:
+  pgdata:
+    driver: local

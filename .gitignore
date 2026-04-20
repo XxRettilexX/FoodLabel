@@ -1,0 +1,23 @@
+# Node & npm
+node_modules/
+npm-debug.log
+
+# Composer
+/vendor/
+composer.lock
+
+# Laravel
+/.env
+/storage/*.key
+/public/hot
+/public/storage
+/storage/debugbar
+
+# Expo
+.expo/
+.expo-shared/
+*.expo
+
+# OS files
+.DS_Store
+Thumbs.db
