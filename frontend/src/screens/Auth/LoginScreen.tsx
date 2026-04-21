@@ -15,7 +15,13 @@ export function LoginScreen() {
       const response = await apiClient.post('/login', { email, password, device_name: 'expo_app' });
       await login(response.data.token, response.data.user);
     } catch (error: any) {
-      Alert.alert('Errore', 'Credenziali non valide o errore di rete');
+      if (error.response?.status === 401 || error.response?.status === 422) {
+         Alert.alert('Errore di Accesso', 'Credenziali non valide. Riprova.');
+      } else if (error.request) {
+         Alert.alert('Errore di Rete', 'Impossibile connettersi al server. Controlla la tua connessione.');
+      } else {
+         Alert.alert('Errore', 'Si è verificato un imprevisto durante il login.');
+      }
     } finally {
       setLoading(false);
     }
