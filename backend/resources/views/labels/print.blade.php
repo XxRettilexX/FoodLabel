@@ -34,28 +34,27 @@
             font-size: 12px;
             line-height: 1.6;
         }
-        .qr-placeholder {
+        .qr-container {
             position: absolute;
             right: 15px;
-            top: 50px;
+            top: 30px;
             width: 80px;
             height: 80px;
-            border: 1px solid #ccc;
             text-align: center;
-            line-height: 80px;
-            font-size: 10px;
-            color: #666;
-            background-color: #eee;
+        }
+        .qr-container canvas {
+            width: 100% !important;
+            height: 100% !important;
         }
         .barcode-strip {
             position: absolute;
-            bottom: 15px;
-            left: 15px;
-            right: 15px;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
             text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-            letter-spacing: 2px;
+        }
+        .barcode-strip svg {
+            height: 40px;
         }
         .btn-print {
             position: absolute;
@@ -90,14 +89,41 @@
             <strong>Q.tà Iniziale:</strong> {{ $payload['readable_data']['quantity'] }} {{ $payload['readable_data']['unit'] }}
         </div>
 
-        <div class="qr-placeholder">
-            <!-- In produzione usare <img> generate dal backend o client render js -->
-            [ QR CODE ]
+        <div class="qr-container">
+            <canvas id="qrcode"></canvas>
         </div>
 
         <div class="barcode-strip">
-            *{{ $payload['label_code'] }}*
+            <svg id="barcode"></svg>
         </div>
     </div>
+
+    <!-- Generazione codici a barre e QR via JS -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Generazione QR Code
+            const qrValue = @json($payload['qr_value']);
+            const qrCanvas = document.getElementById('qrcode');
+            QRCode.toCanvas(qrCanvas, qrValue, {
+                width: 80,
+                margin: 0
+            }, function (error) {
+                if (error) console.error(error);
+            });
+
+            // Generazione Barcode (Standard CODE128)
+            const barcodeValue = "{{ $payload['barcode_value'] ?? $payload['label_code'] }}";
+            JsBarcode("#barcode", barcodeValue, {
+                format: "CODE128",
+                width: 1.5,
+                height: 40,
+                displayValue: true,
+                fontSize: 12,
+                margin: 0
+            });
+        });
+    </script>
 </body>
 </html>
