@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import apiClient from '../../api/client';
-import { RouteProp } from '@react-native-native/native';
+import { RouteProp } from '@react-navigation/native';
 import { LotsStackParamList } from '../../navigation/LotsNavigator';
 
 type RouteProps = RouteProp<LotsStackParamList, 'LotDetail'>;

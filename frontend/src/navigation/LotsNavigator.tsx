@@ -1,5 +1,5 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LotsListScreen } from '../screens/Lots/LotsListScreen';
 import { LotDetailScreen } from '../screens/Lots/LotDetailScreen';
 import { CreateLotScreen } from '../screens/Lots/CreateLotScreen';

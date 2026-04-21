@@ -1,5 +1,5 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuthStore } from '../store/useAuthStore';
 import { AuthNavigator } from './AuthNavigator';
 import { TabNavigator } from './TabNavigator';
