@@ -30,11 +30,16 @@ export const useAuthStore = create<AuthState>((set) => {
     isLoading: true,
     login: async (token, user) => {
       await SecureStore.setItemAsync('auth_token', token);
-      set({ token, user, isLoading: false });
+      set((state) => ({
+        ...state,
+        token,
+        user,
+        isLoading: typeof state.isLoading === 'boolean' ? state.isLoading : false,
+      }));
     },
     logout: async () => {
       await SecureStore.deleteItemAsync('auth_token');
-      try { await apiClient.post('/logout'); } catch (e) {}
+      try { await apiClient.post('/logout'); } catch (e) { }
       set({ token: null, user: null });
     },
     checkAuth: async () => {
@@ -44,7 +49,7 @@ export const useAuthStore = create<AuthState>((set) => {
           // Verify with server using /me route
           const res = await apiClient.get('/me');
           if (res.data && res.data.data) {
-             set({ token, user: res.data.data, isLoading: false });
+            set({ token, user: res.data.data, isLoading: false });
           } else {
             // Se la risposta è anomala gestiamo come errore
             throw new Error('User fetch failed');
