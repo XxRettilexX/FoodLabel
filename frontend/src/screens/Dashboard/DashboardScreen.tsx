@@ -23,9 +23,12 @@ export function DashboardScreen({ navigation }: any) {
             <Text style={styles.cardSubtitle}>Catalogo materie prime</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.card, { backgroundColor: '#fee2e2' }]}>
+          <TouchableOpacity
+            style={[styles.card, { backgroundColor: '#fee2e2' }]}
+            onPress={() => navigation.navigate('Alert')}
+          >
             <Text style={[styles.cardTitle, { color: '#b91c1c' }]}>Allarmi</Text>
-            <Text style={styles.cardSubtitle}>Nessun allarme critico</Text>
+            <Text style={styles.cardSubtitle}>Controlla scadenze e soglie stock</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.card}>
