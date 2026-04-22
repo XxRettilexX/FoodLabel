@@ -77,6 +77,14 @@ export function LotsListScreen({ navigation }: { navigation: NavigationProp }) {
       />
 
       <TouchableOpacity
+        style={styles.scanFab}
+        onPress={() => navigation.navigate('ScanLotLabel')}
+        activeOpacity={0.8}
+      >
+        <Text style={styles.scanFabText}>📷 Scansiona</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
         style={styles.fab}
         onPress={() => navigation.navigate('CreateLot')}
         activeOpacity={0.8}
@@ -156,7 +164,26 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
   },
+  scanFab: {
+    position: 'absolute',
+    bottom: 24,
+    left: 20,
+    backgroundColor: '#0f766e',
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    borderRadius: 28,
+    elevation: 4,
+    shadowColor: '#0f766e',
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+  },
   fabText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  scanFabText: {
     color: '#fff',
     fontWeight: '700',
     fontSize: 14,

@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('lots', LotController::class);
             Route::apiResource('inventory-movements', InventoryMovementController::class);
             Route::apiResource('labels', LabelController::class);
+            Route::post('alerts/refresh', [AlertController::class, 'refresh']);
             Route::apiResource('alerts', AlertController::class);
         });
     });

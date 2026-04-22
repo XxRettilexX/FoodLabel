@@ -17,9 +17,19 @@ class LabelController extends Controller
     public function index(Request $request)
     {
         $query = Label::with(['lot.product', 'printedBy']);
-        
+
         if ($request->has('lot_id')) {
             $query->where('lot_id', $request->query('lot_id'));
+        }
+
+        if ($request->filled('search')) {
+            $search = trim((string) $request->query('search'));
+
+            $query->where(function ($q) use ($search) {
+                $q->where('label_code', $search)
+                    ->orWhere('barcode', $search)
+                    ->orWhere('qr_data', 'like', "%{$search}%");
+            });
         }
 
         return response()->json(['data' => $query->latest()->paginate(20)]);

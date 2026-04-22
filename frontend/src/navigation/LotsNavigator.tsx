@@ -4,12 +4,14 @@ import { LotsListScreen } from '../screens/Lots/LotsListScreen';
 import { LotDetailScreen } from '../screens/Lots/LotDetailScreen';
 import { CreateLotScreen } from '../screens/Lots/CreateLotScreen';
 import { CreateMovementScreen } from '../screens/Lots/CreateMovementScreen';
+import { LotScannerScreen } from '../screens/Lots/LotScannerScreen';
 
 export type LotsStackParamList = {
     LotsList: undefined;
     LotDetail: { lotId: number };
     CreateLot: undefined;
     CreateMovement: { lotId: number };
+    ScanLotLabel: undefined;
 };
 
 const Stack = createNativeStackNavigator<LotsStackParamList>();
@@ -42,6 +44,11 @@ export function LotsNavigator() {
         name="CreateMovement"
         component={CreateMovementScreen}
         options={{ title: 'Nuovo Movimento' }}
+      />
+      <Stack.Screen
+        name="ScanLotLabel"
+        component={LotScannerScreen}
+        options={{ title: 'Scansiona Etichetta' }}
       />
     </Stack.Navigator>
   );
