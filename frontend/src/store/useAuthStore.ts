@@ -30,12 +30,7 @@ export const useAuthStore = create<AuthState>((set) => {
     isLoading: true,
     login: async (token, user) => {
       await SecureStore.setItemAsync('auth_token', token);
-      set((state) => ({
-        ...state,
-        token,
-        user,
-        isLoading: typeof state.isLoading === 'boolean' ? state.isLoading : false,
-      }));
+      set({ token, user, isLoading: false });
     },
     logout: async () => {
       await SecureStore.deleteItemAsync('auth_token');
