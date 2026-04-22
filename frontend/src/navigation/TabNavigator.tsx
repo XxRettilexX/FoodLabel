@@ -4,6 +4,7 @@ import { DashboardScreen } from '../screens/Dashboard/DashboardScreen';
 import { ProductsListScreen } from '../screens/Products/ProductsListScreen';
 import { LotsNavigator } from './LotsNavigator';
 import { ProfileScreen } from '../screens/Profile/ProfileScreen';
+import { AlertsScreen } from '../screens/Alerts/AlertsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,6 +20,7 @@ export function TabNavigator() {
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Prodotti" component={ProductsListScreen} />
       <Tab.Screen name="Lotti" component={LotsNavigator} />
+      <Tab.Screen name="Alert" component={AlertsScreen} />
       <Tab.Screen name="Profilo" component={ProfileScreen} />
     </Tab.Navigator>
   );
