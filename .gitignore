@@ -18,9 +18,9 @@ composer.lock
 .expo-shared/
 *.expo
 
-# OS files
+# Logs
+*.log
+
+# System files
 .DS_Store
 Thumbs.db
-
-
-.claude/

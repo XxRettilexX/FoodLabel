@@ -18,10 +18,7 @@
 /public/storage
 /storage/*.key
 /storage/pail
-/vendor
-_ide_helper.php
-Homestead.json
-Homestead.yaml
-Thumbs.db
 
-.claude/
+# Additional exclusions
+Thumbs.db
+*.tmp
