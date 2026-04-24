@@ -1,0 +1,165 @@
+Agisci come un senior mobile product designer.
+
+Ricorda il dominio:
+questa app serve alla ristorazione, dove la tracciabilità del piatto servito è spesso molto bassa.
+L'interfaccia deve aiutare l'utente a risalire in modo rapido e chiaro all'origine degli ingredienti e dei lotti usati.
+
+Voglio migliorare la UI/UX del frontend attuale con questi obiettivi:
+- rendere più chiari i concetti Product, Lot, Recipe, Production
+- evitare confusione tra barcode prodotto e codice lotto
+- evidenziare sempre stato, scadenza, origine e utilizzo
+- migliorare la dashboard con un bento leggero e utile
+- rendere la genealogia leggibile
+
+Output richiesto:
+- problemi UX trovati
+- proposte concrete schermata per schermata
+- miglioramenti ad alto impatto
+- componenti/stili da uniformare
+
+
+
+
+
+
+
+
+Agisci come un senior application security reviewer specializzato in Laravel API.
+
+Voglio fare un audit di sicurezza del backend Laravel del progetto HACCP.
+
+Contesto:
+- backend API
+- auth token-based
+- gestione utenti, prodotti, lotti, ricette, produzioni, genealogia
+- app usata in ambito ristorazione
+
+Voglio un audit completo su:
+1. autenticazione
+2. autorizzazione
+3. request validation
+4. mass assignment
+5. esposizione dati sensibili
+6. gestione errori
+7. debug mode
+8. rate limiting
+9. protezione endpoint admin/operator
+10. sicurezza file upload se presenti
+11. query rischiose
+12. segreti e variabili ambiente
+13. logging e audit trail
+14. configurazione CORS
+15. headers e hardening base
+16. OWASP API Top 10 rilevante per questo progetto
+
+Task:
+- analizza il codice esistente
+- individua vulnerabilità o punti deboli
+- classifica criticità high/medium/low
+- proponi fix concreti
+- applica i fix semplici direttamente
+- per i fix complessi, lascia piano operativo chiaro
+
+Output richiesto:
+- security findings
+- file impattati
+- fix applicati
+- fix raccomandati
+- checklist finale backend
+
+
+
+
+Agisci come un mobile app security reviewer specializzato in Expo / React Native.
+
+Voglio fare un audit di sicurezza del frontend mobile.
+
+Contesto:
+- Expo app
+- login con token
+- comunicazione con Laravel API
+- scansione barcode/QR
+- dati operativi di magazzino e tracciabilità
+
+Controlla:
+1. come vengono salvati i token
+2. se vengono usati storage insicuri
+3. gestione logout
+4. gestione token scaduti
+5. presenza di dati sensibili nei log
+6. uso di URL non sicure
+7. esposizione di segreti nel client
+8. deep link o route sensibili
+9. gestione permessi fotocamera
+10. stato debug e configurazioni rischiose
+
+Regole:
+- se i token sono in AsyncStorage, proponi migrazione a expo-secure-store
+- verifica che non ci siano chiavi o segreti hardcoded
+- suggerisci miglioramenti semplici e realistici
+
+Output richiesto:
+- vulnerabilità o anti-pattern trovati
+- criticità
+- fix consigliati
+- fix rapidi applicabili subito
+- checklist finale mobile security
+
+
+
+
+
+
+
+
+Agisci come un full-stack security reviewer.
+
+Voglio una checklist finale di sicurezza per il mio progetto:
+- frontend Expo
+- backend Laravel API
+- Docker local/dev setup
+
+Genera una checklist pratica e verificabile, organizzata per aree:
+1. Auth
+2. Authorization
+3. Validation
+4. API security
+5. Secret management
+6. Mobile token storage
+7. Logging
+8. Environment config
+9. Production readiness
+10. OWASP API Top 10 relevance
+
+Per ogni punto indica:
+- cosa controllare
+- rischio
+- come verificarlo
+- fix consigliato
+
+La checklist deve essere pensata per un MVP ITS serio, non per una enterprise app.
+
+
+
+
+Adesso applica un passaggio finale di hardening al progetto.
+
+Obiettivi:
+- togliere debug e configurazioni insicure
+- migliorare gestione errori
+- aggiungere rate limiting base
+- verificare authorization sugli endpoint sensibili
+- rimuovere log sensibili
+- migliorare validazione input
+- verificare storage sicuro dei token lato Expo
+
+Vincoli:
+- non rompere il funzionamento attuale
+- niente overengineering
+- solo hardening pragmatico e adatto a MVP
+
+Output richiesto:
+- modifiche applicate
+- file modificati
+- rischi residui
+- cosa fare prima di una demo o deploy
