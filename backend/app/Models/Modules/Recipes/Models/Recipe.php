@@ -2,15 +2,17 @@
 
 namespace App\Models\Modules\Recipes\Models;
 
+use App\Models\Concerns\BelongsToAccount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Recipe extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\Recipes\Models\RecipeFactory> */
-    use HasFactory;
+    use HasFactory, BelongsToAccount;
 
     protected $fillable = [
+        'account_id',
         'name',
         'code',
         'description',

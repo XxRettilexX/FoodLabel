@@ -23,7 +23,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
 
         // Restricted to Admin & Manager
-        Route::middleware('role:admin,manager')->group(function () {
+        // NOTE: legacy roles admin/manager are replaced by owner/manager in multi-account.
+        Route::middleware('role:owner,manager')->group(function () {
             Route::apiResource('suppliers', SupplierController::class);
             Route::post('products', [ProductController::class, 'store']);
             Route::put('products/{product}', [ProductController::class, 'update']);
@@ -36,7 +37,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Accessible to Operator, Manager, Admin
-        Route::middleware('role:admin,manager,operator')->group(function () {
+        Route::middleware('role:owner,manager,warehouse,kitchen,viewer')->group(function () {
             Route::get('products', [ProductController::class, 'index']);
             Route::get('products/by-barcode/{barcode}', [ProductController::class, 'findByBarcode']);
             Route::get('products/{product}', [ProductController::class, 'show']);

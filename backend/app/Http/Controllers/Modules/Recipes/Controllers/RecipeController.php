@@ -28,7 +28,7 @@ class RecipeController extends Controller
 
     public function store(StoreRecipeRequest $request)
     {
-        $recipe = $this->recipeService->create($request->validated());
+        $recipe = $this->recipeService->create($request->validated(), $request->user()->id);
 
         return response()->json(['data' => $recipe], 201);
     }
@@ -42,7 +42,7 @@ class RecipeController extends Controller
 
     public function update(UpdateRecipeRequest $request, Recipe $recipe)
     {
-        $updated = $this->recipeService->update($recipe, $request->validated());
+        $updated = $this->recipeService->update($recipe, $request->validated(), $request->user()->id);
 
         return response()->json(['data' => $updated]);
     }

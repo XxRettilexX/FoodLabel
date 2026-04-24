@@ -8,6 +8,8 @@ class ProductService
 {
     public function createProduct(array $data, int $userId): Product
     {
+        $user = \App\Models\User::findOrFail($userId);
+        $data['account_id'] = $user->account_id;
         $data['created_by'] = $userId;
         $data['updated_by'] = $userId;
         $data['is_active'] = $data['is_active'] ?? true;

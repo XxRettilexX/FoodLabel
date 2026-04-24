@@ -24,6 +24,12 @@ class AuthController extends Controller
             ], 401);
         }
 
+        if ($user->status !== 'active') {
+            return response()->json([
+                'message' => 'Utente disabilitato.'
+            ], 403);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

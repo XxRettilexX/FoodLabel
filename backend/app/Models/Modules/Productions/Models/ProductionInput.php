@@ -2,15 +2,17 @@
 
 namespace App\Models\Modules\Productions\Models;
 
+use App\Models\Concerns\BelongsToAccount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductionInput extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\Productions\Models\ProductionInputFactory> */
-    use HasFactory;
+    use HasFactory, BelongsToAccount;
 
     protected $fillable = [
+        'account_id',
         'production_id',
         'lot_id',
         'product_id',

@@ -15,6 +15,8 @@ class LotService
     public function receiveLot(array $data, int $userId): Lot
     {
         return DB::transaction(function () use ($data, $userId) {
+            $user = \App\Models\User::findOrFail($userId);
+            $data['account_id'] = $user->account_id;
             $data['current_quantity'] = $data['initial_quantity'];
             $data['user_id'] = $userId;
             $data['status'] = 'active';
@@ -23,6 +25,7 @@ class LotService
 
             if ($lot->initial_quantity > 0) {
                 InventoryMovement::create([
+                    'account_id' => $user->account_id,
                     'lot_id' => $lot->id,
                     'user_id' => $userId,
                     'type' => 'IN',

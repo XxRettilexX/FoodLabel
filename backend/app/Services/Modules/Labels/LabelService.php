@@ -37,6 +37,7 @@ class LabelService
         ]);
 
         return Label::create([
+            'account_id' => $lot->account_id,
             'lot_id' => $lot->id,
             'user_id' => $userId,
             'label_code' => $labelCode,

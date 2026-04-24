@@ -34,7 +34,12 @@ class AlertService
                 $activeSignatures[] = $signature;
 
                 Alert::query()->updateOrCreate(
-                    ['lot_id' => $lot->id, 'type' => $alertData['type'], 'status' => 'pending'],
+                    [
+                        'account_id' => $lot->account_id,
+                        'lot_id' => $lot->id,
+                        'type' => $alertData['type'],
+                        'status' => 'pending',
+                    ],
                     ['resolved_by' => null]
                 );
             }

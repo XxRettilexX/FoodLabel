@@ -37,9 +37,11 @@ class ProductionService
     public function create(array $payload, int $userId): Production
     {
         return DB::transaction(function () use ($payload, $userId) {
+            $user = \App\Models\User::findOrFail($userId);
             $inputs = $payload['inputs'] ?? [];
             unset($payload['inputs']);
 
+            $payload['account_id'] = $user->account_id;
             $payload['created_by'] = $userId;
             $production = Production::create($payload);
 
@@ -63,9 +65,13 @@ class ProductionService
                 }
                 $lot->save();
 
-                $production->inputs()->create($input);
+                $production->inputs()->create([
+                    ...$input,
+                    'account_id' => $user->account_id,
+                ]);
 
                 InventoryMovement::create([
+                    'account_id' => $user->account_id,
                     'lot_id' => $lot->id,
                     'user_id' => $userId,
                     'type' => 'OUT',

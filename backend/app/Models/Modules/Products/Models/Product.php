@@ -2,15 +2,17 @@
 
 namespace App\Models\Modules\Products\Models;
 
+use App\Models\Concerns\BelongsToAccount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\Products\Models\ProductFactory> */
-    use HasFactory;
+    use HasFactory, BelongsToAccount;
 
     protected $fillable = [
+        'account_id',
         'name',
         'sku',
         'barcode',

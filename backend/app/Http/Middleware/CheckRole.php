@@ -19,6 +19,10 @@ class CheckRole
             return response()->json(['message' => 'Non autorizzato.'], 401);
         }
 
+        if ($request->user()->status !== 'active') {
+            return response()->json(['message' => 'Utente disabilitato.'], 403);
+        }
+
         if (!in_array($request->user()->role, $roles)) {
             return response()->json(['message' => 'Azione non consentita per il tuo ruolo.'], 403);
         }

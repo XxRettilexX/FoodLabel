@@ -2,15 +2,16 @@
 
 namespace App\Models\Modules\Lots\Models;
 
+use App\Models\Concerns\BelongsToAccount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Lot extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\Lots\Models\LotFactory> */
-    use HasFactory;
+    use HasFactory, BelongsToAccount;
 
-    protected $fillable = ['product_id', 'user_id', 'batch_number', 'produced_at', 'expires_at', 'initial_quantity', 'current_quantity', 'unit', 'status'];
+    protected $fillable = ['account_id', 'product_id', 'user_id', 'batch_number', 'produced_at', 'expires_at', 'initial_quantity', 'current_quantity', 'unit', 'status'];
 
     protected $casts = [
         'produced_at' => 'datetime',

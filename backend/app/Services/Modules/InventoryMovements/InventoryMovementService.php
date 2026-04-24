@@ -15,6 +15,7 @@ class InventoryMovementService
     public function registerMovement(array $data, int $userId): InventoryMovement
     {
         return DB::transaction(function () use ($data, $userId) {
+            $user = \App\Models\User::findOrFail($userId);
             $lot = Lot::findOrFail($data['lot_id']);
 
             $newQuantity = $lot->current_quantity;
@@ -38,6 +39,7 @@ class InventoryMovementService
             $lot->current_quantity = $newQuantity;
             $lot->save();
 
+            $data['account_id'] = $user->account_id;
             $data['user_id'] = $userId;
             return InventoryMovement::create($data);
         });

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Account;
 use App\Models\User;
 use App\Models\Modules\Suppliers\Models\Supplier;
 use App\Models\Modules\Products\Models\Product;
@@ -16,31 +17,41 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $account = Account::firstOrCreate(['slug' => 'demo'], [
+            'name' => 'Demo Locale',
+            'status' => 'active',
+        ]);
+
         $admin = User::firstOrCreate(['email' => 'admin@foodlabel.local'], [
             'name' => 'Admin User',
-            'role' => 'admin',
+            'account_id' => $account->id,
+            'role' => 'owner',
             'password' => Hash::make('password'),
         ]);
 
         $manager = User::firstOrCreate(['email' => 'manager@foodlabel.local'], [
             'name' => 'Manager User',
+            'account_id' => $account->id,
             'role' => 'manager',
             'password' => Hash::make('password'),
         ]);
 
         $operator = User::firstOrCreate(['email' => 'operator@foodlabel.local'], [
             'name' => 'Operator User',
-            'role' => 'operator',
+            'account_id' => $account->id,
+            'role' => 'warehouse',
             'password' => Hash::make('password'),
         ]);
 
         $supplier = Supplier::create([
+            'account_id' => $account->id,
             'name' => 'Fattorie Rossi SPA',
             'contact_email' => 'ordini@fattorierossi.it',
             'vat_number' => 'IT12345678901'
         ]);
 
         $product1 = Product::create([
+            'account_id' => $account->id,
             'name' => 'Farina Tipo 00',
             'supplier_id' => $supplier->id,
             'description' => 'Sacco da 25Kg',
@@ -48,6 +59,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $product2 = Product::create([
+            'account_id' => $account->id,
             'name' => 'Passata di Pomodoro Mutti',
             'supplier_id' => $supplier->id,
             'description' => 'Latta da 5kg',
@@ -55,6 +67,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $lot1 = Lot::create([
+            'account_id' => $account->id,
             'product_id' => $product1->id,
             'user_id' => $operator->id,
             'batch_number' => 'LOT-FAR-001',
@@ -67,6 +80,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         InventoryMovement::create([
+            'account_id' => $account->id,
             'lot_id' => $lot1->id,
             'user_id' => $operator->id,
             'type' => 'IN',
@@ -76,6 +90,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         InventoryMovement::create([
+            'account_id' => $account->id,
             'lot_id' => $lot1->id,
             'user_id' => $operator->id,
             'type' => 'OUT',
