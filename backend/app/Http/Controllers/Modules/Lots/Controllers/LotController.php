@@ -25,7 +25,11 @@ class LotController extends Controller
             $lot = $this->lotService->receiveLot($request->validated(), $request->user()->id);
             return response()->json(['data' => $lot], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Errore nella creazione del lotto: ' . $e->getMessage()], 500);
+            return response()->json([
+                'message' => config('app.debug')
+                    ? ('Errore nella creazione del lotto: '.$e->getMessage())
+                    : 'Errore nella creazione del lotto.',
+            ], 500);
         }
     }
 

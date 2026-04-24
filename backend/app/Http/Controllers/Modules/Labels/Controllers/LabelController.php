@@ -16,6 +16,11 @@ class LabelController extends Controller
 
     public function index(Request $request)
     {
+        $request->validate([
+            'lot_id' => 'sometimes|integer|exists:lots,id',
+            'search' => 'sometimes|string|max:512',
+        ]);
+
         $query = Label::with(['lot.product', 'printedBy']);
 
         if ($request->has('lot_id')) {
@@ -45,7 +50,11 @@ class LabelController extends Controller
                 'data' => $this->labelService->getLabelPayload($label)
             ], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Errore nella generazione etichetta: ' . $e->getMessage()], 500);
+            return response()->json([
+                'message' => config('app.debug')
+                    ? ('Errore nella generazione etichetta: '.$e->getMessage())
+                    : 'Errore nella generazione etichetta.',
+            ], 500);
         }
     }
 

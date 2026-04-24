@@ -66,13 +66,13 @@ services:
     container_name: foodlabel_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: foodlabel_user
-      POSTGRES_PASSWORD: secretpassword
-      POSTGRES_DB: foodlabel_db
+      POSTGRES_USER: ${POSTGRES_USER:-foodlabel_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secretpassword}
+      POSTGRES_DB: ${POSTGRES_DB:-foodlabel_db}
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     networks:
       - haccp_net
     healthcheck:
@@ -86,7 +86,7 @@ services:
     container_name: foodlabel_redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     networks:
       - haccp_net
     healthcheck:
@@ -100,10 +100,10 @@ services:
     container_name: foodlabel_pgadmin
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@foodlabel.local
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@foodlabel.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
     ports:
-      - "5050:80"
+      - "127.0.0.1:5050:80"
     networks:
       - haccp_net
     depends_on:

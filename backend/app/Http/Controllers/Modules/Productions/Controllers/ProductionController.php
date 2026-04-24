@@ -33,7 +33,9 @@ class ProductionController extends Controller
 
             return response()->json(['data' => $production], 201);
         } catch (Throwable $e) {
-            return response()->json(['message' => $e->getMessage()], 422);
+            return response()->json([
+                'message' => config('app.debug') ? $e->getMessage() : 'Operazione non valida.',
+            ], 422);
         }
     }
 

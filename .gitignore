@@ -17,6 +17,7 @@ composer.lock
 .expo/
 .expo-shared/
 *.expo
+frontend/.env
 
 # OS files
 .DS_Store

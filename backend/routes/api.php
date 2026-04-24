@@ -16,7 +16,7 @@ use App\Http\Controllers\Modules\Auth\Controllers\AuthController;
 
 Route::prefix('v1')->group(function () {
     // Auth routes
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
     
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
@@ -50,7 +50,8 @@ Route::prefix('v1')->group(function () {
             Route::patch('lots/{lot}/status', [LotController::class, 'updateStatus']);
             Route::apiResource('lots', LotController::class);
             Route::apiResource('inventory-movements', InventoryMovementController::class);
-            Route::apiResource('labels', LabelController::class);
+            // Label lookups (scanner) can be abused: apply basic rate limit.
+            Route::apiResource('labels', LabelController::class)->middleware('throttle:scan');
             Route::post('alerts/refresh', [AlertController::class, 'refresh']);
             Route::apiResource('alerts', AlertController::class);
         });

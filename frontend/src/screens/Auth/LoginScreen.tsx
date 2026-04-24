@@ -7,8 +7,8 @@ import { SurfaceCard } from '../../components/SurfaceCard';
 import { colors, spacing } from '../../theme/tokens';
 
 export function LoginScreen() {
-  const [email, setEmail] = useState('admin@foodlabel.local');
-  const [password, setPassword] = useState('password');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const login = useAuthStore((state) => state.login);
 
