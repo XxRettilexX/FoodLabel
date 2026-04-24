@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useAuthStore } from '../../store/useAuthStore';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { SurfaceCard } from '../../components/SurfaceCard';
+import { AppButton } from '../../components/AppButton';
+import { colors, spacing } from '../../theme/tokens';
 
 export function ProfileScreen() {
   const user = useAuthStore((state) => state.user);
@@ -9,30 +12,34 @@ export function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <Text style={styles.title}>Profilo operatore</Text>
+      <SurfaceCard style={styles.header}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{user?.name?.charAt(0).toUpperCase() || 'U'}</Text>
         </View>
         <Text style={styles.name}>{user?.name || 'Utente'}</Text>
         <Text style={styles.email}>{user?.email}</Text>
-        <Text style={styles.role}>Ruolo: {user?.role || 'N/A'}</Text>
-      </View>
+        <Text style={styles.role}>Ruolo {user?.role || 'N/A'}</Text>
+      </SurfaceCard>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-        <Text style={styles.logoutText}>Esci</Text>
-      </TouchableOpacity>
+      <SurfaceCard>
+        <Text style={styles.sectionTitle}>Sessione</Text>
+        <Text style={styles.sectionText}>Usa logout per terminare in sicurezza su dispositivi condivisi.</Text>
+        <AppButton label="Esci" onPress={logout} variant="danger" style={{ marginTop: spacing.sm }} />
+      </SurfaceCard>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb', padding: 20 },
-  header: { alignItems: 'center', marginTop: 30, marginBottom: 40 },
-  avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#2563eb', justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
-  avatarText: { fontSize: 32, color: '#fff', fontWeight: 'bold' },
-  name: { fontSize: 24, fontWeight: 'bold', color: '#1f2937' },
-  email: { fontSize: 16, color: '#6b7280', marginBottom: 5 },
-  role: { fontSize: 14, color: '#059669', fontWeight: 'bold', backgroundColor: '#d1fae5', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-  logoutButton: { backgroundColor: '#ef4444', padding: 15, borderRadius: 8, alignItems: 'center' },
-  logoutText: { color: '#fff', fontWeight: 'bold', fontSize: 16 }
+  container: { flex: 1, backgroundColor: colors.bg, padding: 20, gap: 14 },
+  title: { fontSize: 28, fontWeight: '800', color: colors.text, marginBottom: 4 },
+  header: { alignItems: 'center' },
+  avatar: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center', marginBottom: 12 },
+  avatarText: { fontSize: 28, color: '#fff', fontWeight: '700' },
+  name: { fontSize: 24, fontWeight: '800', color: colors.text },
+  email: { fontSize: 15, color: colors.textSecondary, marginTop: 2, marginBottom: 8 },
+  role: { fontSize: 13, color: '#065f46', fontWeight: '700', backgroundColor: '#d1fae5', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999 },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: colors.text },
+  sectionText: { marginTop: 6, color: colors.textSecondary, fontSize: 13 },
 });

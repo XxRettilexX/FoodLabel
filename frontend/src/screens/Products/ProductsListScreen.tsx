@@ -1,27 +1,56 @@
 import React, { useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { productsApi } from '../../api/products';
 import { useApiData } from '../../hooks/useApiData';
 import { LoadingScreen } from '../../components/LoadingScreen';
 import { ErrorScreen } from '../../components/ErrorScreen';
 import { EmptyState } from '../../components/EmptyState';
 import { Product } from '../../types';
+import { SurfaceCard } from '../../components/SurfaceCard';
+import { AppButton } from '../../components/AppButton';
+import { colors } from '../../theme/tokens';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ProductsStackParamList } from '../../navigation/ProductsNavigator';
 
-export function ProductsListScreen() {
-  const fetcher = useCallback(() => productsApi.getAll(), []);
+type NavProps = NativeStackNavigationProp<ProductsStackParamList, 'ProductsList'>;
+
+export function ProductsListScreen({ navigation }: { navigation: NavProps }) {
+  const [query, setQuery] = React.useState('');
+  const fetcher = useCallback(() => productsApi.getAll(query.trim() || undefined), [query]);
   const { data: products, loading, error, load, refresh } = useApiData<Product[]>(fetcher, []);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  if (loading) return <LoadingScreen />;
-  if (error) return <ErrorScreen message={error} onRetry={refresh} />;
+  if (loading && products.length === 0) return <LoadingScreen />;
+  if (error && products.length === 0) return <ErrorScreen message={error} onRetry={refresh} />;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Catalogo Prodotti</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Catalogo prodotti</Text>
+      <Text style={styles.subtitle}>Gestione rapida anagrafica, barcode e stato operativo</Text>
+      <TextInput
+        value={query}
+        onChangeText={setQuery}
+        placeholder="Cerca per nome, barcode, categoria..."
+        placeholderTextColor={colors.textTertiary}
+        style={styles.search}
+        onSubmitEditing={load}
+      />
+      <View style={styles.actionsRow}>
+        <AppButton
+          label="Cerca barcode"
+          variant="secondary"
+          onPress={() => navigation.navigate('ProductBarcodeSearch')}
+          style={{ flex: 1 }}
+        />
+        <AppButton
+          label="Nuovo prodotto"
+          onPress={() => navigation.navigate('ProductCreate')}
+          style={{ flex: 1 }}
+        />
+      </View>
       <FlatList
         data={products}
         keyExtractor={(item) => item.id.toString()}
@@ -29,64 +58,79 @@ export function ProductsListScreen() {
         refreshing={false}
         onRefresh={refresh}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.name}>{item.name}</Text>
-              {item.default_shelf_life_days && (
-                <View style={styles.shelfBadge}>
-                  <Text style={styles.shelfText}>{item.default_shelf_life_days}gg</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', { productId: item.id })} activeOpacity={0.75}>
+            <SurfaceCard style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.name}>{item.name}</Text>
+                <View style={[styles.statusPill, item.is_active ? styles.statusActive : styles.statusInactive]}>
+                  <Text style={[styles.statusText, item.is_active ? styles.statusTextActive : styles.statusTextInactive]}>
+                    {item.is_active ? 'ATTIVO' : 'INATTIVO'}
+                  </Text>
                 </View>
-              )}
-            </View>
-            {item.description ? (
-              <Text style={styles.description} numberOfLines={2}>
-                {item.description}
+              </View>
+              <Text style={styles.meta}>
+                {item.category || 'Categoria n/d'} • {item.base_unit}
               </Text>
-            ) : null}
-            <View style={styles.cardFooter}>
-              <Text style={styles.supplier}>
-                {item.supplier?.name || 'Fornitore non assegnato'}
-              </Text>
-            </View>
-          </View>
+              <Text style={styles.barcode}>{item.barcode || 'Barcode non assegnato'}</Text>
+              {item.description ? (
+                <Text style={styles.description} numberOfLines={2}>
+                  {item.description}
+                </Text>
+              ) : null}
+            </SurfaceCard>
+          </TouchableOpacity>
         )}
         ListEmptyComponent={
           <EmptyState message="Nessun prodotto nel catalogo." icon="📦" />
         }
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.bg,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontSize: 28,
+    fontWeight: '800',
+    color: colors.text,
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 12,
+  },
+  subtitle: {
+    paddingHorizontal: 20,
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginTop: 4,
+    marginBottom: 12,
+  },
+  search: {
+    marginHorizontal: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    color: colors.text,
+    fontSize: 14,
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 12,
   },
   listContent: {
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
   card: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    shadowColor: '#000',
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -96,35 +140,51 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#1f2937',
+    fontWeight: '800',
+    color: colors.text,
     flex: 1,
   },
-  shelfBadge: {
-    backgroundColor: '#ede9fe',
+  statusPill: {
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 10,
+    borderRadius: 999,
     marginLeft: 8,
   },
-  shelfText: {
-    fontSize: 11,
+  statusActive: {
+    backgroundColor: '#dcfce7',
+  },
+  statusInactive: {
+    backgroundColor: '#fee2e2',
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  statusTextActive: {
+    color: '#166534',
+  },
+  statusTextInactive: {
+    color: '#991b1b',
+  },
+  meta: {
+    fontSize: 12,
+    color: colors.textTertiary,
+    marginBottom: 4,
+  },
+  barcode: {
+    backgroundColor: '#f3f4f6',
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderRadius: 8,
+    color: colors.text,
+    fontSize: 13,
     fontWeight: '600',
-    color: '#6d28d9',
+    marginBottom: 8,
   },
   description: {
     fontSize: 13,
-    color: '#6b7280',
+    color: colors.textSecondary,
     marginBottom: 8,
     lineHeight: 18,
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  supplier: {
-    fontSize: 12,
-    color: '#9ca3af',
-    fontStyle: 'italic',
   },
 });

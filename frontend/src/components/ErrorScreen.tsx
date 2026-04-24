@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { AppButton } from './AppButton';
+import { colors } from '../theme/tokens';
 
 interface ErrorScreenProps {
   message: string;
@@ -10,12 +12,10 @@ export function ErrorScreen({ message, onRetry }: ErrorScreenProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.icon}>⚠️</Text>
-      <Text style={styles.title}>Qualcosa è andato storto</Text>
+      <Text style={styles.title}>Errore operativo</Text>
       <Text style={styles.message}>{message}</Text>
       {onRetry && (
-        <TouchableOpacity style={styles.button} onPress={onRetry}>
-          <Text style={styles.buttonText}>Riprova</Text>
-        </TouchableOpacity>
+        <AppButton label="Riprova" onPress={onRetry} style={styles.button} />
       )}
     </View>
   );
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.bg,
     padding: 30,
   },
   icon: {
@@ -35,26 +35,18 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: '700',
+    color: colors.text,
     marginBottom: 8,
   },
   message: {
     fontSize: 14,
-    color: '#6b7280',
+    color: colors.textTertiary,
     textAlign: 'center',
     marginBottom: 20,
     lineHeight: 20,
   },
   button: {
-    backgroundColor: '#2563eb',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 14,
+    minWidth: 140,
   },
 });

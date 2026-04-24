@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useAuthStore } from '../../store/useAuthStore';
 import apiClient from '../../api/client';
+import { AppButton } from '../../components/AppButton';
+import { SurfaceCard } from '../../components/SurfaceCard';
+import { colors, spacing } from '../../theme/tokens';
 
 export function LoginScreen() {
   const [email, setEmail] = useState('admin@foodlabel.local');
@@ -28,34 +31,64 @@ export function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>FoodLabel HACCP</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Accedi</Text>}
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <View style={styles.topBlock}>
+        <Text style={styles.kicker}>FoodLabel</Text>
+        <Text style={styles.title}>Tracciabilita lotto HACCP</Text>
+        <Text style={styles.subtitle}>Accesso rapido e sicuro per uso operativo.</Text>
+      </View>
+
+      <SurfaceCard style={styles.formCard}>
+        <Text style={styles.sectionTitle}>Accedi</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor={colors.textTertiary}
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor={colors.textTertiary}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <AppButton label="Accedi" onPress={handleLogin} loading={loading} />
+      </SurfaceCard>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: 'center', backgroundColor: '#f9fafb' },
-  title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 40, color: '#1f2937' },
-  input: { backgroundColor: '#fff', padding: 15, borderRadius: 8, borderWidth: 1, borderColor: '#e5e7eb', marginBottom: 15 },
-  button: { backgroundColor: '#2563eb', padding: 15, borderRadius: 8, alignItems: 'center' },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 }
+  container: { flex: 1, padding: spacing.lg, justifyContent: 'center', backgroundColor: colors.bg },
+  topBlock: { marginBottom: spacing.lg },
+  kicker: {
+    color: colors.primary,
+    fontWeight: '700',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginBottom: 6,
+  },
+  title: { fontSize: 30, fontWeight: '800', color: colors.text },
+  subtitle: { marginTop: 8, fontSize: 15, color: colors.textSecondary },
+  formCard: { gap: spacing.sm },
+  sectionTitle: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 },
+  input: {
+    backgroundColor: colors.surfaceMuted,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    fontSize: 15,
+    color: colors.text,
+  },
 });

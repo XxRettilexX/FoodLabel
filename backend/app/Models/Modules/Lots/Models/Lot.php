@@ -32,4 +32,8 @@ class Lot extends Model
     public function alerts() { 
         return $this->hasMany(\App\Models\Modules\Alerts\Models\Alert::class); 
     }
+
+    public function productionInputs() {
+        return $this->hasMany(\App\Models\Modules\Productions\Models\ProductionInput::class);
+    }
 }

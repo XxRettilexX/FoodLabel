@@ -22,6 +22,14 @@ export interface Supplier extends Timestamps {
 export interface Product extends Timestamps {
   id: number;
   name: string;
+  sku?: string | null;
+  barcode?: string | null;
+  category?: string | null;
+  base_unit: 'kg' | 'g' | 'l' | 'ml' | 'pcs';
+  is_active: boolean;
+  notes?: string | null;
+  created_by?: number | null;
+  updated_by?: number | null;
   description: string | null;
   supplier_id: number | null;
   default_shelf_life_days: number | null;
@@ -130,4 +138,96 @@ export interface CreateMovementPayload {
   type: MovementType;
   quantity: number;
   notes?: string;
+}
+
+export interface CreateProductPayload {
+  name: string;
+  sku?: string;
+  barcode?: string;
+  category?: string;
+  base_unit: 'kg' | 'g' | 'l' | 'ml' | 'pcs';
+  is_active?: boolean;
+  notes?: string;
+}
+
+export type MeasureUnit = 'kg' | 'g' | 'l' | 'ml' | 'pcs' | 'pz';
+
+export interface RecipeItem extends Timestamps {
+  id: number;
+  recipe_id: number;
+  product_id: number;
+  quantity: number | string;
+  unit: MeasureUnit;
+  notes: string | null;
+  product?: Product;
+}
+
+export interface Recipe extends Timestamps {
+  id: number;
+  name: string;
+  code: string | null;
+  description: string | null;
+  yield_quantity: number | string | null;
+  yield_unit: MeasureUnit | null;
+  is_active: boolean;
+  items?: RecipeItem[];
+  items_count?: number;
+}
+
+export interface CreateRecipePayload {
+  name: string;
+  code?: string;
+  description?: string;
+  yield_quantity?: number;
+  yield_unit?: MeasureUnit;
+  is_active?: boolean;
+  items?: Array<{
+    product_id: number;
+    quantity: number;
+    unit: MeasureUnit;
+    notes?: string;
+  }>;
+}
+
+export interface ProductionInput extends Timestamps {
+  id: number;
+  production_id: number;
+  lot_id: number;
+  product_id: number;
+  quantity_used: number | string;
+  unit: MeasureUnit;
+  notes: string | null;
+  lot?: Lot;
+  product?: Product;
+}
+
+export interface Production extends Timestamps {
+  id: number;
+  recipe_id: number | null;
+  name: string;
+  produced_at: string;
+  output_quantity: number | string | null;
+  output_unit: MeasureUnit | null;
+  notes: string | null;
+  created_by: number;
+  recipe?: Recipe | null;
+  createdBy?: User;
+  inputs?: ProductionInput[];
+  inputs_count?: number;
+}
+
+export interface CreateProductionPayload {
+  recipe_id?: number;
+  name: string;
+  produced_at: string;
+  output_quantity?: number;
+  output_unit?: MeasureUnit;
+  notes?: string;
+  inputs: Array<{
+    lot_id: number;
+    product_id: number;
+    quantity_used: number;
+    unit: MeasureUnit;
+    notes?: string;
+  }>;
 }

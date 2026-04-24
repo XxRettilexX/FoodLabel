@@ -1,14 +1,17 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
+import { colors } from '../theme/tokens';
 
 interface LoadingScreenProps {
   color?: string;
+  message?: string;
 }
 
-export function LoadingScreen({ color = '#2563eb' }: LoadingScreenProps) {
+export function LoadingScreen({ color = colors.primary, message = 'Caricamento in corso...' }: LoadingScreenProps) {
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" color={color} />
+      <Text style={styles.label}>{message}</Text>
     </View>
   );
 }
@@ -18,6 +21,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.bg,
+    gap: 10,
+  },
+  label: {
+    color: colors.textTertiary,
+    fontSize: 13,
   },
 });

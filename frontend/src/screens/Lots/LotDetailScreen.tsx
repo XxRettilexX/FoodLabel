@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   Alert,
 } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
@@ -17,6 +16,8 @@ import { ErrorScreen } from '../../components/ErrorScreen';
 import { StatusBadge } from '../../components/StatusBadge';
 import { SubmitButton } from '../../components/SubmitButton';
 import { Lot, InventoryMovement, MovementType } from '../../types';
+import { SurfaceCard } from '../../components/SurfaceCard';
+import { colors } from '../../theme/tokens';
 
 type RouteProps = RouteProp<LotsStackParamList, 'LotDetail'>;
 type NavProps = NativeStackNavigationProp<LotsStackParamList, 'LotDetail'>;
@@ -74,8 +75,7 @@ export function LotDetailScreen({
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* ── Intestazione Lotto ────────────────────── */}
-      <View style={styles.header}>
+      <SurfaceCard style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={styles.batchNumber}>{lot.batch_number}</Text>
           <StatusBadge status={lot.status} />
@@ -84,30 +84,26 @@ export function LotDetailScreen({
           {lot.product?.name || 'Prodotto sconosciuto'}
         </Text>
         {lot.product?.supplier?.name && (
-          <Text style={styles.supplierName}>
-            Fornitore: {lot.product.supplier.name}
-          </Text>
+          <Text style={styles.supplierName}>Fornitore: {lot.product.supplier.name}</Text>
         )}
-      </View>
+      </SurfaceCard>
 
-      {/* ── Dettagli Quantità ─────────────────────── */}
       <View style={styles.quantityRow}>
-        <View style={styles.quantityCard}>
+        <SurfaceCard style={styles.quantityCard}>
           <Text style={styles.qtyLabel}>Iniziale</Text>
           <Text style={styles.qtyValue}>
             {lot.initial_quantity} {lot.unit}
           </Text>
-        </View>
-        <View style={[styles.quantityCard, styles.quantityCardHighlight]}>
+        </SurfaceCard>
+        <SurfaceCard style={[styles.quantityCard, styles.quantityCardHighlight]}>
           <Text style={[styles.qtyLabel, { color: '#fff' }]}>Attuale</Text>
           <Text style={[styles.qtyValue, { color: '#fff' }]}>
             {lot.current_quantity} {lot.unit}
           </Text>
-        </View>
+        </SurfaceCard>
       </View>
 
-      {/* ── Date ──────────────────────────────────── */}
-      <View style={styles.section}>
+      <SurfaceCard style={styles.section}>
         <View style={styles.dateRow}>
           <View style={styles.dateItem}>
             <Text style={styles.dateLabel}>Prodotto il</Text>
@@ -123,26 +119,24 @@ export function LotDetailScreen({
             Registrato da: {lot.created_by.name}
           </Text>
         )}
-      </View>
+      </SurfaceCard>
 
-      {/* ── Azioni ────────────────────────────────── */}
       <View style={styles.actionsRow}>
         <SubmitButton
-          label="📦 Registra Movimento"
+          label="Registra movimento"
           onPress={() => navigation.navigate('CreateMovement', { lotId: lot.id })}
           variant="primary"
           style={{ flex: 1, marginRight: 8 }}
         />
         <SubmitButton
-          label="🏷️ Etichetta"
+          label="Etichetta"
           onPress={handleGenerateLabel}
           variant="success"
           style={{ flex: 1, marginLeft: 8 }}
         />
       </View>
 
-      {/* ── Storico Movimenti ─────────────────────── */}
-      <View style={styles.section}>
+      <SurfaceCard style={styles.section}>
         <Text style={styles.sectionTitle}>
           Storico Movimenti ({lot.movements?.length || 0})
         </Text>
@@ -152,10 +146,9 @@ export function LotDetailScreen({
             return (
               <View key={m.id} style={styles.movementCard}>
                 <View style={styles.movementHeader}>
-                  <Text style={styles.movementIcon}>{config.icon}</Text>
                   <View style={{ flex: 1 }}>
                     <Text style={[styles.movementType, { color: config.color }]}>
-                      {config.label}
+                      {config.icon} {config.label}
                     </Text>
                     <Text style={styles.movementDate}>
                       {formatDateTime(m.created_at)}
@@ -178,7 +171,7 @@ export function LotDetailScreen({
         ) : (
           <Text style={styles.noMovements}>Nessun movimento registrato.</Text>
         )}
-      </View>
+      </SurfaceCard>
     </ScrollView>
   );
 }
@@ -186,7 +179,7 @@ export function LotDetailScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.bg,
   },
   content: {
     padding: 20,
@@ -195,16 +188,8 @@ const styles = StyleSheet.create({
 
   // Header
   header: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
+    padding: 18,
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
-    elevation: 1,
   },
   headerTop: {
     flexDirection: 'row',
@@ -215,17 +200,17 @@ const styles = StyleSheet.create({
   batchNumber: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#1f2937',
+    color: colors.text,
   },
   productName: {
-    fontSize: 15,
-    color: '#4b5563',
+    fontSize: 16,
+    color: colors.textSecondary,
+    fontWeight: '600',
   },
   supplierName: {
     fontSize: 13,
-    color: '#9ca3af',
+    color: colors.textTertiary,
     marginTop: 4,
-    fontStyle: 'italic',
   },
 
   // Quantity
@@ -236,20 +221,15 @@ const styles = StyleSheet.create({
   },
   quantityCard: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
     alignItems: 'center',
   },
   quantityCardHighlight: {
-    backgroundColor: '#2563eb',
-    borderColor: '#2563eb',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   qtyLabel: {
     fontSize: 12,
-    color: '#6b7280',
+    color: colors.textTertiary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 4,
@@ -257,16 +237,11 @@ const styles = StyleSheet.create({
   qtyValue: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#1f2937',
+    color: colors.text,
   },
 
   // Dates
   section: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
     marginBottom: 16,
   },
   dateRow: {
@@ -278,21 +253,20 @@ const styles = StyleSheet.create({
   },
   dateLabel: {
     fontSize: 11,
-    color: '#9ca3af',
+    color: colors.textTertiary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   dateValue: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: '700',
+    color: colors.textSecondary,
     marginTop: 4,
   },
   createdBy: {
     fontSize: 12,
-    color: '#9ca3af',
+    color: colors.textTertiary,
     marginTop: 12,
-    fontStyle: 'italic',
   },
 
   // Actions
@@ -305,24 +279,21 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#1f2937',
+    color: colors.text,
     marginBottom: 12,
   },
   movementCard: {
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.surfaceMuted,
     padding: 12,
     borderRadius: 10,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#f3f4f6',
+    borderColor: colors.border,
   },
   movementHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-  },
-  movementIcon: {
-    fontSize: 18,
   },
   movementType: {
     fontSize: 14,
@@ -330,7 +301,7 @@ const styles = StyleSheet.create({
   },
   movementDate: {
     fontSize: 11,
-    color: '#9ca3af',
+    color: colors.textTertiary,
     marginTop: 1,
   },
   movementQty: {
@@ -339,20 +310,20 @@ const styles = StyleSheet.create({
   },
   movementNotes: {
     fontSize: 12,
-    color: '#6b7280',
+    color: colors.textSecondary,
     marginTop: 6,
     marginLeft: 28,
     fontStyle: 'italic',
   },
   movementUser: {
     fontSize: 11,
-    color: '#9ca3af',
+    color: colors.textTertiary,
     marginTop: 4,
     marginLeft: 28,
   },
   noMovements: {
     fontSize: 13,
-    color: '#9ca3af',
+    color: colors.textTertiary,
     textAlign: 'center',
     paddingVertical: 12,
   },

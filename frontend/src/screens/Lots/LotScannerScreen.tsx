@@ -4,6 +4,7 @@ import { BarcodeScanningResult, CameraType, CameraView, useCameraPermissions } f
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LotsStackParamList } from '../../navigation/LotsNavigator';
 import { labelsApi } from '../../api/labels';
+import { colors } from '../../theme/tokens';
 
 type NavigationProp = NativeStackNavigationProp<LotsStackParamList, 'ScanLotLabel'>;
 
@@ -103,15 +104,28 @@ export function LotScannerScreen({ navigation }: { navigation: NavigationProp })
         onBarcodeScanned={handleScan}
       />
       <View style={styles.overlay}>
-        <View style={styles.scanFrame} />
-        <Text style={styles.hintText}>Inquadra QR o barcode della label</Text>
-        {isResolving && (
-          <View style={styles.loadingChip}>
-            <ActivityIndicator size="small" color="#fff" />
-            <Text style={styles.loadingChipText}>Cerco lotto...</Text>
-          </View>
-        )}
-        {feedback && <Text style={styles.feedbackText}>{feedback}</Text>}
+        <View style={styles.topInfo}>
+          <Text style={styles.title}>Scansione etichetta</Text>
+          <Text style={styles.hintText}>Allinea QR o barcode dentro il riquadro.</Text>
+        </View>
+        <View style={styles.centerWrap}>
+          <View style={styles.scanFrame} />
+        </View>
+        <View style={styles.bottomInfo}>
+          {isResolving && (
+            <View style={styles.loadingChip}>
+              <ActivityIndicator size="small" color="#fff" />
+              <Text style={styles.loadingChipText}>Cerco lotto...</Text>
+            </View>
+          )}
+          {feedback && <Text style={styles.feedbackText}>{feedback}</Text>}
+          {!feedback && !isResolving && (
+            <Text style={styles.caption}>Suggerimento: tieni la label ferma per 1-2 secondi.</Text>
+          )}
+          <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+            <Text style={styles.backBtnText}>Chiudi scanner</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -119,32 +133,48 @@ export function LotScannerScreen({ navigation }: { navigation: NavigationProp })
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#111827' },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f9fafb' },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg },
   camera: { flex: 1 },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 70,
+    paddingBottom: 36,
     paddingHorizontal: 24,
   },
+  topInfo: {
+    backgroundColor: 'rgba(15, 23, 42, 0.55)',
+    borderRadius: 14,
+    padding: 12,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 17,
+    fontWeight: '700',
+  },
+  centerWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
   scanFrame: {
-    width: 240,
-    height: 240,
-    borderWidth: 2,
-    borderColor: '#60a5fa',
+    width: 250,
+    height: 250,
+    borderWidth: 2.5,
+    borderColor: '#93c5fd',
     borderRadius: 16,
     backgroundColor: 'transparent',
-    marginBottom: 20,
   },
   hintText: {
-    color: '#f3f4f6',
-    fontSize: 15,
-    fontWeight: '600',
-    textAlign: 'center',
-    paddingHorizontal: 12,
+    color: '#e5e7eb',
+    fontSize: 14,
+    marginTop: 4,
+  },
+  bottomInfo: {
+    alignItems: 'center',
+    gap: 10,
   },
   loadingChip: {
-    marginTop: 14,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
@@ -155,42 +185,58 @@ const styles = StyleSheet.create({
   },
   loadingChipText: { color: '#fff', fontWeight: '600' },
   feedbackText: {
-    marginTop: 16,
-    color: '#fecaca',
-    backgroundColor: 'rgba(127, 29, 29, 0.82)',
+    color: '#fee2e2',
+    backgroundColor: 'rgba(127, 29, 29, 0.84)',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 10,
     textAlign: 'center',
     overflow: 'hidden',
   },
+  caption: {
+    color: '#d1d5db',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  backBtn: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    borderColor: 'rgba(255,255,255,0.4)',
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  backBtnText: {
+    color: '#fff',
+    fontWeight: '700',
+  },
   permissionContainer: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: colors.bg,
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
   permissionTitle: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#1f2937',
+    color: colors.text,
     textAlign: 'center',
     marginBottom: 10,
   },
   permissionText: {
     fontSize: 15,
-    color: '#4b5563',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 20,
   },
   deniedText: {
     fontSize: 14,
-    color: '#b91c1c',
+    color: colors.danger,
     textAlign: 'center',
     marginBottom: 16,
   },
   primaryBtn: {
-    backgroundColor: '#2563eb',
+    backgroundColor: colors.primary,
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: 'center',
