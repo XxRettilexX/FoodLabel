@@ -82,6 +82,14 @@ export function CreateProductionScreen({ route, navigation }: { route: RouteProp
     setInputs((prev) => prev.filter((item) => item.lot_id !== lotId));
   };
 
+  const hasInvalidInputs = useMemo(() => {
+    if (inputs.length === 0) return true;
+    return inputs.some((i) => {
+      const n = Number(i.quantity_used);
+      return !Number.isFinite(n) || n <= 0;
+    });
+  }, [inputs]);
+
   const handleSave = () => {
     submit({
       recipe_id: recipeId || undefined,
@@ -171,7 +179,12 @@ export function CreateProductionScreen({ route, navigation }: { route: RouteProp
       })}
       {fieldErrors.inputs?.[0] ? <Text style={styles.error}>{fieldErrors.inputs[0]}</Text> : null}
 
-      <SubmitButton label="Registra produzione" onPress={handleSave} loading={submitting} disabled={!name.trim() || inputs.length === 0} />
+      <SubmitButton
+        label="Registra produzione"
+        onPress={handleSave}
+        loading={submitting}
+        disabled={!name.trim() || hasInvalidInputs}
+      />
     </ScrollView>
   );
 }

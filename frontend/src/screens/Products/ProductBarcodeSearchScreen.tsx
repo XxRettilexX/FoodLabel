@@ -16,7 +16,11 @@ export function ProductBarcodeSearchScreen() {
 
   const handleSearch = async () => {
     const trimmed = barcode.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setError('Inserisci un barcode per avviare la ricerca.');
+      setResult(null);
+      return;
+    }
 
     setLoading(true);
     setError(null);

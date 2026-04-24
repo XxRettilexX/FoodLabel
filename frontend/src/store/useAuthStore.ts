@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
-import apiClient from '../api/client';
+import apiClient, { setUnauthorizedHandler } from '../api/client';
 
 interface AuthState {
   token: string | null;
@@ -12,17 +12,11 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => {
-  // We attach a listener to client interceptor so it triggers a logout in zustand on 401
-  apiClient.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      if (error.response?.status === 401) {
-        await SecureStore.deleteItemAsync('auth_token');
-        set({ token: null, user: null });
-      }
-      return Promise.reject(error);
-    }
-  );
+  // Centralize 401 handling in api client (avoid duplicate interceptors).
+  setUnauthorizedHandler(async () => {
+    await SecureStore.deleteItemAsync('auth_token');
+    set({ token: null, user: null });
+  });
 
   return {
     token: null,

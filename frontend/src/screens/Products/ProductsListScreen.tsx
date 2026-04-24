@@ -55,7 +55,7 @@ export function ProductsListScreen({ navigation }: { navigation: NavProps }) {
         data={products}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContent}
-        refreshing={false}
+        refreshing={loading}
         onRefresh={refresh}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', { productId: item.id })} activeOpacity={0.75}>

@@ -4,12 +4,19 @@ import * as SecureStore from 'expo-secure-store';
 const baseURL = process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:8000/api/v1';
 const isInsecureHttp = /^http:\/\//i.test(baseURL);
 
+let onUnauthorized: (() => void | Promise<void>) | null = null;
+
+export function setUnauthorizedHandler(handler: (() => void | Promise<void>) | null) {
+  onUnauthorized = handler;
+}
+
 const apiClient = axios.create({
   baseURL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
+  timeout: 15000,
 });
 
 apiClient.interceptors.request.use(async (config) => {
@@ -28,6 +35,20 @@ apiClient.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error?.response?.status === 401 && onUnauthorized) {
+      try {
+        await onUnauthorized();
+      } catch {
+        // best-effort
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 
 export default apiClient;

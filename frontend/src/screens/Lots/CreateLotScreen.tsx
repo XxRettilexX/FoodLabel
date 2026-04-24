@@ -70,10 +70,15 @@ export function CreateLotScreen({ navigation }: { navigation: NavProps }) {
       return;
     }
 
+    const parsedQty = Number(quantity);
+    if (!Number.isFinite(parsedQty) || parsedQty <= 0) {
+      return;
+    }
+
     const payload: CreateLotPayload = {
       product_id: productId,
       batch_number: batchNumber.trim(),
-      initial_quantity: Number(quantity),
+      initial_quantity: parsedQty,
       unit,
       expires_at: expiresAt || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
       produced_at: producedAt || null,
@@ -207,7 +212,7 @@ export function CreateLotScreen({ navigation }: { navigation: NavProps }) {
         label="Crea Lotto"
         onPress={handleSubmit}
         loading={submitting}
-        disabled={!productId || !batchNumber.trim() || !quantity}
+        disabled={!productId || !batchNumber.trim() || !quantity || !Number.isFinite(Number(quantity)) || Number(quantity) <= 0}
         style={{ marginTop: 8 }}
       />
     </ScrollView>

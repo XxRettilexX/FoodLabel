@@ -24,6 +24,13 @@ export function IngredientOriginScreen({ route }: { route: RouteProps }) {
   if (error) return <ErrorScreen message={error} onRetry={refresh} />;
   if (!data) return <ErrorScreen message="Genealogia non disponibile" onRetry={refresh} />;
 
+  const formatDate = (dateStr: string | null): string => {
+    if (!dateStr) return 'N/D';
+    const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return 'N/D';
+    return d.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <SurfaceCard>
@@ -41,7 +48,7 @@ export function IngredientOriginScreen({ route }: { route: RouteProps }) {
           <Text style={styles.line}>
             Quantita usata: {ingredient.quantity_used} {ingredient.unit}
           </Text>
-          <Text style={styles.line}>Scadenza lotto: {ingredient.lot?.expires_at || 'N/D'}</Text>
+          <Text style={styles.line}>Scadenza lotto: {formatDate(ingredient.lot?.expires_at ?? null)}</Text>
         </SurfaceCard>
       ))}
     </ScrollView>

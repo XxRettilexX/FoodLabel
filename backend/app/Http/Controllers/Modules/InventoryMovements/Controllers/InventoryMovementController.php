@@ -28,7 +28,9 @@ class InventoryMovementController extends Controller
             );
             return response()->json(['data' => $movement], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 400);
+            return response()->json([
+                'message' => config('app.debug') ? $e->getMessage() : 'Operazione non valida.',
+            ], 400);
         }
     }
 
