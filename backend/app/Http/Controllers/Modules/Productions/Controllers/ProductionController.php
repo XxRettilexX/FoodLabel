@@ -12,7 +12,9 @@ use Throwable;
 class ProductionController extends Controller
 {
     public function __construct(private ProductionService $productionService)
-    {}
+    {
+        $this->authorizeResource(Production::class, 'production');
+    }
 
     public function index(Request $request)
     {

@@ -11,7 +11,9 @@ use Illuminate\Http\Request;
 class InventoryMovementController extends Controller
 {
     public function __construct(protected InventoryMovementService $movementService)
-    {}
+    {
+        $this->authorizeResource(InventoryMovement::class, 'inventory_movement');
+    }
 
     public function index(Request $request)
     {

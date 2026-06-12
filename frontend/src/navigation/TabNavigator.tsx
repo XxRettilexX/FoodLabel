@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { DashboardScreen } from '../screens/Dashboard/DashboardScreen';
 import { LotsNavigator } from './LotsNavigator';
@@ -6,17 +7,26 @@ import { ProfileScreen } from '../screens/Profile/ProfileScreen';
 import { AlertsScreen } from '../screens/Alerts/AlertsScreen';
 import { ProductsNavigator } from './ProductsNavigator';
 import { PreparationNavigator } from './PreparationNavigator';
+import { colors } from '../theme/tokens';
+import { TabIcons, ICON_STROKE, ICON_SIZE } from '../theme/icons';
 
 const Tab = createBottomTabNavigator();
 
 export function TabNavigator() {
   return (
     <Tab.Navigator
-        screenOptions={{
-            tabBarActiveTintColor: '#2563eb',
-            tabBarInactiveTintColor: '#6b7280',
-            headerShown: false,
-        }}
+      screenOptions={({ route }) => ({
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary,
+        headerShown: false,
+        tabBarIcon: ({ color }) => {
+          const Icon = TabIcons[route.name as keyof typeof TabIcons];
+          if (!Icon) return null;
+          return <Icon size={ICON_SIZE.navbar} strokeWidth={ICON_STROKE} color={color} />;
+        },
+        tabBarLabelStyle: styles.label,
+        tabBarStyle: styles.tabBar,
+      })}
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Prodotti" component={ProductsNavigator} />
@@ -27,3 +37,19 @@ export function TabNavigator() {
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: colors.surface,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(0, 0, 0, 0.08)',
+    height: Platform.OS === 'ios' ? 88 : 64,
+    paddingTop: 6,
+    paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+  },
+  label: {
+    fontSize: 11,
+    fontWeight: '500' as const,
+    letterSpacing: 0.1,
+  },
+});

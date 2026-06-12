@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { AppButton } from './AppButton';
 import { colors } from '../theme/tokens';
+import { StateIcons, ICON_STROKE, ICON_SIZE } from '../theme/icons';
 
 interface ErrorScreenProps {
   message: string;
@@ -11,7 +12,11 @@ interface ErrorScreenProps {
 export function ErrorScreen({ message, onRetry }: ErrorScreenProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.icon}>⚠️</Text>
+      <StateIcons.Error
+        size={ICON_SIZE.emptyState}
+        strokeWidth={ICON_STROKE}
+        color={colors.warning}
+      />
       <Text style={styles.title}>Errore operativo</Text>
       <Text style={styles.message}>{message}</Text>
       {onRetry && (
@@ -29,14 +34,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg,
     padding: 30,
   },
-  icon: {
-    fontSize: 40,
-    marginBottom: 12,
-  },
   title: {
     fontSize: 18,
     fontWeight: '700',
     color: colors.text,
+    marginTop: 12,
     marginBottom: 8,
   },
   message: {

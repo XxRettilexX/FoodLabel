@@ -4,10 +4,15 @@ namespace App\Services\Modules\Labels;
 
 use App\Models\Modules\Labels\Models\Label;
 use App\Models\Modules\Lots\Models\Lot;
+use App\Services\Audit\AuditService;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class LabelService
 {
+    public function __construct(private AuditService $audit)
+    {
+    }
     /**
      * Genera un'etichetta associata al lotto con i relativi Payload QR/Barcode.
      */
@@ -36,14 +41,22 @@ class LabelService
             'status' => $lot->status
         ]);
 
-        return Label::create([
+        $label = Label::create([
             'account_id' => $lot->account_id,
             'lot_id' => $lot->id,
             'user_id' => $userId,
             'label_code' => $labelCode,
             'qr_data' => $qrPayload,
-            'barcode' => $barcode
+            'barcode' => $barcode,
         ]);
+
+        $this->audit->logModelChange(
+            'created',
+            $label,
+            metadata: ['lot_id' => $lot->id, 'batch_number' => $lot->batch_number],
+        );
+
+        return $label;
     }
 
     /**
@@ -58,6 +71,11 @@ class LabelService
             'label_code' => $label->label_code,
             'barcode_value' => $label->barcode,
             'qr_value' => $label->qr_data,
+            'print_url' => URL::temporarySignedRoute(
+                'labels.print',
+                now()->addHours(24),
+                ['label' => $label->id]
+            ),
             'readable_data' => [
                 'batch_number' => $lot->batch_number,
                 'product_name' => $lot->product->name,

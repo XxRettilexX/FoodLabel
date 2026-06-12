@@ -4,11 +4,15 @@ namespace App\Services\Modules\InventoryMovements;
 
 use App\Models\Modules\InventoryMovements\Models\InventoryMovement;
 use App\Models\Modules\Lots\Models\Lot;
+use App\Services\Audit\AuditService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
 class InventoryMovementService
 {
+    public function __construct(private AuditService $audit)
+    {
+    }
     /**
      * Registra un nuovo movimento (IN/OUT/ADJUST) e aggiorna la quantità del lotto.
      */
@@ -18,6 +22,7 @@ class InventoryMovementService
             $user = \App\Models\User::findOrFail($userId);
             $lot = Lot::findOrFail($data['lot_id']);
 
+            $previousQuantity = (float) $lot->current_quantity;
             $newQuantity = $lot->current_quantity;
 
             if ($data['type'] === 'IN') {
@@ -41,7 +46,20 @@ class InventoryMovementService
 
             $data['account_id'] = $user->account_id;
             $data['user_id'] = $userId;
-            return InventoryMovement::create($data);
+            $movement = InventoryMovement::create($data);
+
+            $this->audit->logModelChange(
+                'created',
+                $movement,
+                metadata: [
+                    'lot_id' => $lot->id,
+                    'previous_quantity' => $previousQuantity,
+                    'new_quantity' => (float) $lot->current_quantity,
+                ],
+                user: $user,
+            );
+
+            return $movement;
         });
     }
 

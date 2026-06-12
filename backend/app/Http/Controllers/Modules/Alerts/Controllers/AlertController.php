@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 class AlertController extends Controller
 {
     public function __construct(private AlertService $alertService)
-    {}
+    {
+        $this->authorizeResource(Alert::class, 'alert');
+    }
 
     /**
      * Display a listing of the resource.
@@ -57,6 +59,8 @@ class AlertController extends Controller
 
     public function refresh()
     {
+        $this->authorize('refresh', Alert::class);
+
         $this->alertService->refresh();
 
         return response()->json([

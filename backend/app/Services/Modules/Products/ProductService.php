@@ -3,9 +3,14 @@
 namespace App\Services\Modules\Products;
 
 use App\Models\Modules\Products\Models\Product;
+use App\Services\Audit\AuditService;
 
 class ProductService
 {
+    public function __construct(private AuditService $audit)
+    {
+    }
+
     public function createProduct(array $data, int $userId): Product
     {
         $user = \App\Models\User::findOrFail($userId);
@@ -14,7 +19,10 @@ class ProductService
         $data['updated_by'] = $userId;
         $data['is_active'] = $data['is_active'] ?? true;
 
-        return Product::create($data);
+        $product = Product::create($data);
+        $this->audit->logModelChange('created', $product, user: $user);
+
+        return $product;
     }
 
     public function getAllProducts(?string $search = null, ?string $barcode = null)

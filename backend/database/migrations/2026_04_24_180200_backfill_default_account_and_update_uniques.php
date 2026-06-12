@@ -9,7 +9,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $accountId = DB::table('accounts')->insertGetId([
+        $existing = DB::table('accounts')->where('slug', 'default')->first();
+
+        $accountId = $existing?->id ?? DB::table('accounts')->insertGetId([
             'name' => 'Default Account',
             'slug' => 'default',
             'timezone' => null,
@@ -38,21 +40,23 @@ return new class extends Migration
             DB::table($table)->whereNull('account_id')->update(['account_id' => $accountId]);
         }
 
-        // Make account_id NOT NULL (raw SQL to avoid DBAL dependency)
-        foreach ([
-            'users',
-            'suppliers',
-            'products',
-            'lots',
-            'inventory_movements',
-            'labels',
-            'alerts',
-            'recipes',
-            'recipe_items',
-            'productions',
-            'production_inputs',
-        ] as $table) {
-            DB::statement("ALTER TABLE {$table} ALTER COLUMN account_id SET NOT NULL");
+        // Make account_id NOT NULL (PostgreSQL only; SQLite lacks ALTER COLUMN support)
+        if (DB::getDriverName() === 'pgsql') {
+            foreach ([
+                'users',
+                'suppliers',
+                'products',
+                'lots',
+                'inventory_movements',
+                'labels',
+                'alerts',
+                'recipes',
+                'recipe_items',
+                'productions',
+                'production_inputs',
+            ] as $table) {
+                DB::statement("ALTER TABLE {$table} ALTER COLUMN account_id SET NOT NULL");
+            }
         }
 
         // Update unique constraints to be tenant-aware

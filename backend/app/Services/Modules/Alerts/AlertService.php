@@ -4,11 +4,15 @@ namespace App\Services\Modules\Alerts;
 
 use App\Models\Modules\Alerts\Models\Alert;
 use App\Models\Modules\Lots\Models\Lot;
+use App\Services\Audit\AuditService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class AlertService
 {
+    public function __construct(private AuditService $audit)
+    {
+    }
     private const LOW_STOCK_RATIO = 0.20;
     private const EXPIRING_DAYS = 7;
 
@@ -16,7 +20,7 @@ class AlertService
     {
         $today = Carbon::today();
 
-        Lot::query()
+        $expiredLots = Lot::query()
             ->whereDate('expires_at', '<', $today)
             ->where('status', '!=', 'expired')
             ->update(['status' => 'expired']);
@@ -45,15 +49,28 @@ class AlertService
             }
         }
 
+        $resolvedCount = 0;
+
         Alert::query()
             ->where('status', 'pending')
             ->get()
-            ->each(function (Alert $alert) use ($activeSignatures) {
+            ->each(function (Alert $alert) use ($activeSignatures, &$resolvedCount) {
                 $signature = "{$alert->lot_id}:{$alert->type}";
                 if (!in_array($signature, $activeSignatures, true)) {
                     $alert->update(['status' => 'resolved']);
+                    $resolvedCount++;
                 }
             });
+
+        $this->audit->log(
+            action: 'refreshed',
+            metadata: [
+                'auditable_type' => 'Alert',
+                'expired_lots_updated' => $expiredLots,
+                'active_alert_signatures' => count($activeSignatures),
+                'alerts_resolved' => $resolvedCount,
+            ],
+        );
     }
 
     public function getDashboard(?string $type = null): array

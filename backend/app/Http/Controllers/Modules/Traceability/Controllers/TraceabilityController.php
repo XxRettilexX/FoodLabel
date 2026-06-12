@@ -14,6 +14,8 @@ class TraceabilityController extends Controller
 
     public function productionGenealogy(Production $production)
     {
+        $this->authorize('view', $production);
+
         return response()->json([
             'data' => $this->traceabilityService->getProductionGenealogy($production),
         ]);
@@ -21,6 +23,8 @@ class TraceabilityController extends Controller
 
     public function lotUsageHistory(Lot $lot)
     {
+        $this->authorize('view', $lot);
+
         return response()->json([
             'data' => $this->traceabilityService->getLotUsageHistory($lot),
         ]);

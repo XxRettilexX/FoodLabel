@@ -3,10 +3,14 @@
 namespace App\Services\Modules\Recipes;
 
 use App\Models\Modules\Recipes\Models\Recipe;
+use App\Services\Audit\AuditService;
 use Illuminate\Support\Facades\DB;
 
 class RecipeService
 {
+    public function __construct(private AuditService $audit)
+    {
+    }
     public function getAll(?string $search = null, ?bool $isActive = null)
     {
         $query = Recipe::query()->withCount('items');
@@ -35,6 +39,7 @@ class RecipeService
             $data['account_id'] = $user->account_id;
             $data['is_active'] = $data['is_active'] ?? true;
             $recipe = Recipe::create($data);
+            $this->audit->logModelChange('created', $recipe, user: $user);
 
             if (!empty($items)) {
                 $recipe->items()->createMany(array_map(function ($item) use ($user) {
@@ -56,6 +61,7 @@ class RecipeService
             $items = $data['items'] ?? null;
             unset($data['items']);
 
+            $oldValues = $this->audit->snapshot($recipe);
             $recipe->update($data);
 
             if (!is_null($items)) {
@@ -71,7 +77,10 @@ class RecipeService
                 }
             }
 
-            return $recipe->fresh()->load('items.product');
+            $updated = $recipe->fresh()->load('items.product');
+            $this->audit->logModelChange('updated', $updated, oldValues: $oldValues, user: $user);
+
+            return $updated;
         });
     }
 }

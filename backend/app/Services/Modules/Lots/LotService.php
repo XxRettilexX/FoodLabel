@@ -4,11 +4,15 @@ namespace App\Services\Modules\Lots;
 
 use App\Models\Modules\Lots\Models\Lot;
 use App\Models\Modules\InventoryMovements\Models\InventoryMovement;
+use App\Services\Audit\AuditService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
 class LotService
 {
+    public function __construct(private AuditService $audit)
+    {
+    }
     /**
      * Crea un lotto e registra automaticamente il movimento di ingresso iniziale.
      */
@@ -22,6 +26,7 @@ class LotService
             $data['status'] = 'active';
 
             $lot = Lot::create($data);
+            $this->audit->logModelChange('created', $lot, user: $user);
 
             if ($lot->initial_quantity > 0) {
                 InventoryMovement::create([
@@ -44,7 +49,16 @@ class LotService
             throw new Exception("Status non valido.");
         }
 
+        $oldStatus = $lot->status;
         $lot->update(['status' => $status]);
+
+        $this->audit->logModelChange(
+            'status_changed',
+            $lot->fresh(),
+            oldValues: ['status' => $oldStatus],
+            metadata: ['new_status' => $status],
+        );
+
         return $lot;
     }
 

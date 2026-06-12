@@ -1,19 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '../theme/tokens';
+import { StateIcons, ICON_STROKE, ICON_SIZE } from '../theme/icons';
+import type { LucideIcon } from 'lucide-react-native';
 
 interface EmptyStateProps {
   message?: string;
-  icon?: string;
+  Icon?: LucideIcon;
 }
 
 export function EmptyState({
   message = 'Nessun elemento trovato.',
-  icon = '📭',
+  Icon = StateIcons.Empty,
 }: EmptyStateProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.icon}>{icon}</Text>
+      <Icon
+        size={ICON_SIZE.emptyState}
+        strokeWidth={ICON_STROKE}
+        color={colors.textTertiary}
+      />
       <Text style={styles.message}>{message}</Text>
       <Text style={styles.caption}>I nuovi dati appariranno qui appena disponibili.</Text>
     </View>
@@ -26,15 +32,12 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     paddingHorizontal: 24,
   },
-  icon: {
-    fontSize: 36,
-    marginBottom: 10,
-  },
   message: {
     fontSize: 15,
     color: colors.textSecondary,
     fontWeight: '600',
     textAlign: 'center',
+    marginTop: 12,
   },
   caption: {
     marginTop: 6,

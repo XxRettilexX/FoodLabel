@@ -5,13 +5,19 @@ namespace App\Http\Controllers\Modules\Products\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Modules\Products\StoreProductRequest;
 use App\Models\Modules\Products\Models\Product;
+use App\Services\Audit\AuditService;
 use App\Services\Modules\Products\ProductService;
+use App\Support\Validation\AccountRules;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function __construct(protected ProductService $productService)
-    {}
+    public function __construct(
+        protected ProductService $productService,
+        protected AuditService $audit,
+    ) {
+        $this->authorizeResource(Product::class, 'product');
+    }
 
     public function index(Request $request)
     {
@@ -40,25 +46,30 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'sku' => 'sometimes|nullable|string|max:100',
-            'barcode' => 'sometimes|nullable|string|max:255|unique:products,barcode,' . $product->id,
+            'barcode' => ['sometimes', 'nullable', 'string', 'max:255', AccountRules::unique('products', 'barcode', $product->id)],
             'category' => 'sometimes|nullable|string|max:100',
             'base_unit' => 'sometimes|string|in:kg,g,l,ml,pcs',
             'is_active' => 'sometimes|boolean',
             'notes' => 'sometimes|nullable|string|max:2000',
-            'supplier_id' => 'sometimes|nullable|exists:suppliers,id',
+            'supplier_id' => ['sometimes', 'nullable', AccountRules::exists('suppliers')],
             'description' => 'sometimes|nullable|string|max:1000',
             'default_shelf_life_days' => 'sometimes|nullable|integer|min:1',
         ]);
 
         $validated['updated_by'] = $request->user()->id;
 
+        $oldValues = $this->audit->snapshot($product);
         $product->update($validated);
+        $this->audit->logModelChange('updated', $product->fresh(), oldValues: $oldValues);
+
         return response()->json(['data' => $product]);
     }
 
     public function destroy(Product $product)
     {
+        $this->audit->logModelChange('deleted', $product, oldValues: $this->audit->snapshot($product));
         $product->delete();
+
         return response()->json(null, 204);
     }
 

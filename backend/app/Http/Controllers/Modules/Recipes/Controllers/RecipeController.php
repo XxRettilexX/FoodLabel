@@ -6,13 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Modules\Recipes\StoreRecipeRequest;
 use App\Http\Requests\Modules\Recipes\UpdateRecipeRequest;
 use App\Models\Modules\Recipes\Models\Recipe;
+use App\Services\Audit\AuditService;
 use App\Services\Modules\Recipes\RecipeService;
 use Illuminate\Http\Request;
 
 class RecipeController extends Controller
 {
-    public function __construct(private RecipeService $recipeService)
-    {}
+    public function __construct(
+        private RecipeService $recipeService,
+        private AuditService $audit,
+    ) {
+        $this->authorizeResource(Recipe::class, 'recipe');
+    }
 
     public function index(Request $request)
     {
@@ -49,6 +54,7 @@ class RecipeController extends Controller
 
     public function destroy(Recipe $recipe)
     {
+        $this->audit->logModelChange('deleted', $recipe, oldValues: $this->audit->snapshot($recipe));
         $recipe->delete();
 
         return response()->json(null, 204);

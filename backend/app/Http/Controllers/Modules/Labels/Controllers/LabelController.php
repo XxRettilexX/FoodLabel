@@ -6,18 +6,24 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Modules\Labels\StoreLabelRequest;
 use App\Models\Modules\Labels\Models\Label;
 use App\Models\Modules\Lots\Models\Lot;
+use App\Services\Audit\AuditService;
 use App\Services\Modules\Labels\LabelService;
+use App\Support\Validation\AccountRules;
 use Illuminate\Http\Request;
 
 class LabelController extends Controller
 {
-    public function __construct(protected LabelService $labelService)
-    {}
+    public function __construct(
+        protected LabelService $labelService,
+        protected AuditService $audit,
+    ) {
+        $this->authorizeResource(Label::class, 'label');
+    }
 
     public function index(Request $request)
     {
         $request->validate([
-            'lot_id' => 'sometimes|integer|exists:lots,id',
+            'lot_id' => ['sometimes', 'integer', AccountRules::exists('lots')],
             'search' => 'sometimes|string|max:512',
         ]);
 
@@ -78,7 +84,9 @@ class LabelController extends Controller
 
     public function destroy(Label $label)
     {
+        $this->audit->logModelChange('deleted', $label, oldValues: $this->audit->snapshot($label));
         $label->delete();
+
         return response()->json(null, 204);
     }
 }

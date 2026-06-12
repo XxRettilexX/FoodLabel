@@ -5,11 +5,15 @@ namespace App\Services\Modules\Productions;
 use App\Models\Modules\InventoryMovements\Models\InventoryMovement;
 use App\Models\Modules\Lots\Models\Lot;
 use App\Models\Modules\Productions\Models\Production;
+use App\Services\Audit\AuditService;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 class ProductionService
 {
+    public function __construct(private AuditService $audit)
+    {
+    }
     public function list(?int $recipeId = null)
     {
         $query = Production::query()
@@ -80,7 +84,15 @@ class ProductionService
                 ]);
             }
 
-            return $this->detail($production->fresh());
+            $created = $this->detail($production->fresh());
+            $this->audit->logModelChange(
+                'created',
+                $created,
+                metadata: ['inputs_count' => count($inputs)],
+                user: $user,
+            );
+
+            return $created;
         });
     }
 }

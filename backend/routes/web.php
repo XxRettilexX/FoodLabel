@@ -8,4 +8,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/labels/{label}/print', [LabelController::class, 'printView']);
+Route::get('/labels/{label}/print', [LabelController::class, 'printView'])
+    ->middleware('signed')
+    ->name('labels.print');
