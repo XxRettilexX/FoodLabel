@@ -150,5 +150,41 @@ if errorlevel 1 (
 )
 
 echo.
-echo Setup complete.
+echo Waiting for backend container to be ready...
+timeout /t 5 /nobreak >nul
+
+echo.
+echo ===========================
+echo Running API Tests...
+echo ===========================
+%DOCKER_COMPOSE_CMD% exec -T app php artisan test
+if errorlevel 1 (
+    echo.
+    echo ERROR: API Tests failed!
+    echo Please check the output above to identify which tests failed.
+    echo The backend containers are still running for debugging.
+    exit /b 1
+)
+echo.
+echo SUCCESS: All API Tests passed!
+
+echo.
+echo ===========================
+echo Starting Frontend...
+echo ===========================
+if exist "frontend" (
+    pushd "frontend" >nul
+    echo Starting Expo server in a new window...
+    start cmd /k "npm start"
+    popd >nul
+) else (
+    echo WARNING: "frontend\" folder not found. Cannot start frontend.
+)
+
+echo.
+echo ===========================
+echo Setup complete!
+echo - Backend is running via Docker.
+echo - Frontend is starting in a separate window.
+echo ===========================
 exit /b 0
