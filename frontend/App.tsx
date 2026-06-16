@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppNavigator } from './src/navigation/AppNavigator';
-import { useAuthStore } from './src/store/useAuthStore';
+import { AppNavigator } from './src/core/navigation/AppNavigator';
+import { useAuthStore } from './src/core/store/useAuthStore';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function App() {
