@@ -60,12 +60,12 @@ export function RecipeListScreen({ navigation }: { navigation: NavProps }) {
             </SurfaceCard>
           </TouchableOpacity>
         )}
-        ListEmptyComponent={<EmptyState message="Nessuna ricetta disponibile." icon="📘" />}
+        ListEmptyComponent={<EmptyState message="Nessuna ricetta disponibile." />}
         ListFooterComponent={
           <>
             <Text style={[styles.sectionTitle, { marginTop: 18 }]}>Produzioni recenti</Text>
             {productions.length === 0 ? (
-              <EmptyState message="Nessuna produzione registrata." icon="🍲" />
+              <EmptyState message="Nessuna produzione registrata." />
             ) : (
               productions.slice(0, 6).map((prod) => (
                 <TouchableOpacity

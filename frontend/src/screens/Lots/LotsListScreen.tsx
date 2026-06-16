@@ -81,7 +81,7 @@ export function LotsListScreen({ navigation }: { navigation: NavigationProp }) {
           </TouchableOpacity>
         )}
         ListEmptyComponent={
-          <EmptyState message="Nessun lotto registrato." icon="📋" />
+          <EmptyState message="Nessun lotto registrato." />
         }
       />
 

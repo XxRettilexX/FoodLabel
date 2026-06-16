@@ -42,6 +42,11 @@ export function AlertsScreen({ navigation }: { navigation: any }) {
     return unsubscribe;
   }, [navigation, load]);
 
+  // Bug fix: changing the filter updates fetcher but focus listener alone never reloads data.
+  useEffect(() => {
+    load();
+  }, [filter, load]);
+
   const headerStats = useMemo(
     () => [
       { label: 'Scaduti', value: data.counts.expired, color: '#b91c1c' },
@@ -116,7 +121,7 @@ export function AlertsScreen({ navigation }: { navigation: any }) {
             </Text>
           </TouchableOpacity>
         )}
-        ListEmptyComponent={<EmptyState message="Nessun alert attivo." icon="✅" />}
+        ListEmptyComponent={<EmptyState message="Nessun alert attivo." />}
       />
     </View>
   );

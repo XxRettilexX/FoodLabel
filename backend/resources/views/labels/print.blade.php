@@ -114,7 +114,8 @@
             });
 
             // Generazione Barcode (Standard CODE128)
-            const barcodeValue = "{{ $payload['barcode_value'] ?? $payload['label_code'] }}";
+            // Bug fix: use JSON encoding so batch codes with quotes/backslashes cannot break out of JS string context.
+            const barcodeValue = @json($payload['barcode_value'] ?? $payload['label_code']);
             JsBarcode("#barcode", barcodeValue, {
                 format: "CODE128",
                 width: 1.5,

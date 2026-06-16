@@ -31,7 +31,9 @@ export const labelsApi = {
       params: { search: rawValue },
     });
 
-    const match = res.data.data.data[0];
+    // Bug fix: guard empty/malformed paginated payloads instead of throwing on undefined[0].
+    const rows = res.data?.data?.data;
+    const match = Array.isArray(rows) ? rows[0] : undefined;
     return match?.lot_id ?? null;
   },
 };

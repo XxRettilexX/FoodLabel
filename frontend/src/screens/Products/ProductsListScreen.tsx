@@ -16,12 +16,21 @@ type NavProps = NativeStackNavigationProp<ProductsStackParamList, 'ProductsList'
 
 export function ProductsListScreen({ navigation }: { navigation: NavProps }) {
   const [query, setQuery] = React.useState('');
-  const fetcher = useCallback(() => productsApi.getAll(query.trim() || undefined), [query]);
+  // Bug fix: keep API query separate from the input value so typing does not fire a request per keystroke.
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const fetcher = useCallback(
+    () => productsApi.getAll(searchQuery.trim() || undefined),
+    [searchQuery],
+  );
   const { data: products, loading, error, load, refresh } = useApiData<Product[]>(fetcher, []);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  const runSearch = () => {
+    setSearchQuery(query);
+  };
 
   if (loading && products.length === 0) return <LoadingScreen />;
   if (error && products.length === 0) return <ErrorScreen message={error} onRetry={refresh} />;
@@ -36,7 +45,8 @@ export function ProductsListScreen({ navigation }: { navigation: NavProps }) {
         placeholder="Cerca per nome, barcode, categoria..."
         placeholderTextColor={colors.textTertiary}
         style={styles.search}
-        onSubmitEditing={load}
+        onSubmitEditing={runSearch}
+        returnKeyType="search"
       />
       <View style={styles.actionsRow}>
         <AppButton
@@ -81,7 +91,7 @@ export function ProductsListScreen({ navigation }: { navigation: NavProps }) {
           </TouchableOpacity>
         )}
         ListEmptyComponent={
-          <EmptyState message="Nessun prodotto nel catalogo." icon="📦" />
+          <EmptyState message="Nessun prodotto nel catalogo." />
         }
       />
     </View>

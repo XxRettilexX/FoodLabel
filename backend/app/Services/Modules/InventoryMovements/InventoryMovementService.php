@@ -28,7 +28,7 @@ class InventoryMovementService
             if ($data['type'] === 'IN') {
                 $newQuantity += $data['quantity'];
             } elseif ($data['type'] === 'OUT') {
-                if ($lot->current_quantity < $data['quantity']) {
+                if ((float) $lot->current_quantity < (float) $data['quantity']) {
                     throw new Exception("Quantità insufficiente nel lotto per completare l'OUT.");
                 }
                 $newQuantity -= $data['quantity'];
@@ -36,9 +36,10 @@ class InventoryMovementService
                 $newQuantity = $data['quantity']; // ADJUST riprogramma la giacenza
             }
 
-            // Se il lotto si svuota, marcalo consumato in automatico
-            if ($newQuantity <= 0 && $data['type'] === 'OUT') {
+            // Bug fix: mark consumed when stock reaches zero for OUT and ADJUST, not OUT only.
+            if ($newQuantity <= 0 && in_array($data['type'], ['OUT', 'ADJUST'], true)) {
                 $lot->status = 'consumed';
+                $newQuantity = max(0, $newQuantity);
             }
 
             $lot->current_quantity = $newQuantity;

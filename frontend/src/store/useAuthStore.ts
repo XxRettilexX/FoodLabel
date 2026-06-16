@@ -27,8 +27,14 @@ export const useAuthStore = create<AuthState>((set) => {
       set({ token, user, isLoading: false });
     },
     logout: async () => {
+      // Bug fix: call /logout while the Bearer token is still in SecureStore so the
+      // server can revoke the Sanctum token. Clearing storage first made logout a no-op server-side.
+      try {
+        await apiClient.post('/logout');
+      } catch {
+        // best-effort — still clear local session if the network call fails
+      }
       await SecureStore.deleteItemAsync('auth_token');
-      try { await apiClient.post('/logout'); } catch (e) { }
       set({ token: null, user: null });
     },
     checkAuth: async () => {

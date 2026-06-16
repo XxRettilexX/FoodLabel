@@ -17,7 +17,13 @@ class InventoryMovementController extends Controller
 
     public function index(Request $request)
     {
-        $lotId = $request->query('lot_id');
+        $validated = $request->validate([
+            'lot_id' => 'sometimes|integer|min:1',
+        ]);
+
+        // Bug fix: query params arrive as strings; passing them to int $lotId caused TypeError on PHP 8+.
+        $lotId = isset($validated['lot_id']) ? (int) $validated['lot_id'] : null;
+
         return response()->json(['data' => $this->movementService->getHistory($lotId)]);
     }
 

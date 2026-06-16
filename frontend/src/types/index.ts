@@ -100,7 +100,7 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  role: 'admin' | 'manager' | 'operator';
+  role: 'owner' | 'manager' | 'warehouse' | 'kitchen' | 'viewer';
 }
 
 // ── API Response Wrappers ────────────────────────────

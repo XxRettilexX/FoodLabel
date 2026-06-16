@@ -83,21 +83,24 @@ class AlertService
             ->orderBy('expires_at')
             ->get();
 
-        $items = $lots
+        $allItems = $lots
             ->flatMap(fn (Lot $lot) => $this->buildAlertsForLot($lot, $today))
             ->values();
 
-        if ($type) {
-            $items = $items->where('type', $type)->values();
-        }
+        // Bug fix: counts must reflect the full dashboard, not the filtered subset.
+        $counts = [
+            'expiring_soon' => $allItems->where('type', 'expiring_soon')->count(),
+            'expired' => $allItems->where('type', 'expired')->count(),
+            'low_stock' => $allItems->where('type', 'low_stock')->count(),
+        ];
+
+        $items = $type
+            ? $allItems->where('type', $type)->values()
+            : $allItems;
 
         return [
             'items' => $items->all(),
-            'counts' => [
-                'expiring_soon' => $items->where('type', 'expiring_soon')->count(),
-                'expired' => $items->where('type', 'expired')->count(),
-                'low_stock' => $items->where('type', 'low_stock')->count(),
-            ],
+            'counts' => $counts,
         ];
     }
 
