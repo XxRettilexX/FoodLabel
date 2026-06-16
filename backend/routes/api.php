@@ -64,6 +64,7 @@ Route::prefix('v1')->group(function () {
             Route::delete('lots/{lot}', [LotController::class, 'destroy']);
             Route::post('inventory-movements', [InventoryMovementController::class, 'store']);
             Route::post('labels', [LabelController::class, 'store'])->middleware('throttle:scan');
+            Route::post('labels/{label}/print-network', [LabelController::class, 'printToIp']);
             Route::delete('labels/{label}', [LabelController::class, 'destroy'])->middleware('throttle:scan');
             Route::post('alerts/refresh', [AlertController::class, 'refresh']);
         });

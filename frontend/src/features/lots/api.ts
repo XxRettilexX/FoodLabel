@@ -91,9 +91,21 @@ export const labelsApi = {
       params: { search: rawValue },
     });
 
-    // Bug fix: guard empty/malformed paginated payloads instead of throwing on undefined[0].
     const rows = res.data?.data?.data;
     const match = Array.isArray(rows) ? rows[0] : undefined;
     return match?.lot_id ?? null;
+  },
+
+  create: async (lotId: number): Promise<LabelListItem> => {
+    const res = await apiClient.post<ApiResponse<LabelListItem>>('/labels', { lot_id: lotId });
+    return res.data.data;
+  },
+
+  printNetwork: async (labelId: number, printerIp: string): Promise<any> => {
+    const res = await apiClient.post(`/labels/${labelId}/print-network`, {
+      printer_ip: printerIp,
+      printer_port: 3000,
+    });
+    return res.data;
   },
 };

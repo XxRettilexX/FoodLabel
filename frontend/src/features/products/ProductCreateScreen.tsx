@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FormField } from '../../shared/components/FormField';
 import { SubmitButton } from '../../shared/components/SubmitButton';
@@ -8,6 +8,8 @@ import { CreateProductPayload } from '../../shared/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProductsStackParamList } from './ProductsNavigator';
 import { colors } from '../../core/theme/tokens';
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { LoadingScreen } from '../../shared/components/LoadingScreen';
 
 type NavProps = NativeStackNavigationProp<ProductsStackParamList, 'ProductCreate'>;
 type Unit = CreateProductPayload['base_unit'];
@@ -22,6 +24,10 @@ export function ProductCreateScreen({ navigation }: { navigation: NavProps }) {
   const [unit, setUnit] = useState<Unit>('pcs');
   const [notes, setNotes] = useState('');
   const [isActive, setIsActive] = useState(true);
+
+  const [permission, requestPermission] = useCameraPermissions();
+  const [isScanning, setIsScanning] = useState(false);
+  const scannerRef = useRef(false);
 
   const submitOptions = useMemo(
     () => ({
@@ -48,13 +54,63 @@ export function ProductCreateScreen({ navigation }: { navigation: NavProps }) {
     });
   };
 
+  const handleScanPress = async () => {
+    if (!permission?.granted) {
+      await requestPermission();
+    }
+    scannerRef.current = false;
+    setIsScanning(true);
+  };
+
+  if (isScanning) {
+    if (!permission) return <LoadingScreen message="Verifica permessi..." />;
+    if (!permission.granted) {
+      return (
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
+          <Text style={{ textAlign: 'center', marginBottom: 20 }}>Permesso fotocamera necessario per scansionare.</Text>
+          <SubmitButton label="Richiedi Permesso" onPress={requestPermission} />
+          <TouchableOpacity style={{ marginTop: 20 }} onPress={() => setIsScanning(false)}>
+            <Text style={{ color: colors.primary }}>Torna indietro</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return (
+      <View style={{ flex: 1, backgroundColor: '#000' }}>
+        <CameraView
+          style={{ flex: 1 }}
+          facing="back"
+          onBarcodeScanned={({ data }) => {
+            if (scannerRef.current) return;
+            scannerRef.current = true;
+            setBarcode(data);
+            setIsScanning(false);
+          }}
+        />
+        <View style={styles.scannerOverlay}>
+          <Text style={styles.scannerText}>Inquadra il codice a barre</Text>
+        </View>
+        <TouchableOpacity style={styles.scannerCancelBtn} onPress={() => setIsScanning(false)}>
+          <Text style={styles.scannerCancelText}>Annulla</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       <Text style={styles.title}>Nuovo prodotto</Text>
       <Text style={styles.subtitle}>Compila i campi essenziali per la tracciabilita barcode-first.</Text>
 
       <FormField label="Nome prodotto *" value={name} onChangeText={setName} placeholder="es. Passata di pomodoro 5kg" error={fieldErrors.name?.[0]} />
-      <FormField label="Barcode" value={barcode} onChangeText={setBarcode} placeholder="EAN/UPC" error={fieldErrors.barcode?.[0]} />
+      
+      <View style={{ marginBottom: 16 }}>
+        <FormField label="Barcode" value={barcode} onChangeText={setBarcode} placeholder="EAN/UPC" error={fieldErrors.barcode?.[0]} />
+        <TouchableOpacity style={styles.scanBtn} onPress={handleScanPress}>
+          <Text style={styles.scanBtnText}>📷 Scansiona con fotocamera</Text>
+        </TouchableOpacity>
+      </View>
+
       <FormField label="SKU" value={sku} onChangeText={setSku} placeholder="Codice interno" error={fieldErrors.sku?.[0]} />
       <FormField label="Categoria" value={category} onChangeText={setCategory} placeholder="es. Conserva" error={fieldErrors.category?.[0]} />
 
@@ -102,4 +158,10 @@ const styles = StyleSheet.create({
   stateText: { color: colors.textSecondary, fontWeight: '700' },
   stateTextActive: { color: colors.primary },
   errorText: { color: '#ef4444', marginBottom: 10, marginTop: -2, fontSize: 12 },
+  scanBtn: { alignSelf: 'flex-start', paddingVertical: 6, paddingHorizontal: 12, backgroundColor: '#e0e7ff', borderRadius: 8, marginTop: -10 },
+  scanBtnText: { color: '#4338ca', fontWeight: '600', fontSize: 13 },
+  scannerOverlay: { position: 'absolute', top: 100, left: 0, right: 0, alignItems: 'center' },
+  scannerText: { color: '#fff', fontSize: 16, fontWeight: '700', backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, overflow: 'hidden' },
+  scannerCancelBtn: { position: 'absolute', bottom: 40, alignSelf: 'center', backgroundColor: '#fff', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 30 },
+  scannerCancelText: { color: '#000', fontWeight: 'bold', fontSize: 16 },
 });

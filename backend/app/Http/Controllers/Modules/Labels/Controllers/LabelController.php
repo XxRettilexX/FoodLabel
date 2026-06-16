@@ -82,6 +82,44 @@ class LabelController extends Controller
         return response()->json(['message' => 'Etichetta immutabile. Generane una nuova.'], 405);
     }
 
+    public function printToIp(Request $request, Label $label)
+    {
+        $validated = $request->validate([
+            'printer_ip' => 'required|ip',
+            'printer_port' => 'nullable|integer|min:1|max:65535'
+        ]);
+
+        $ip = $validated['printer_ip'];
+        $port = $validated['printer_port'] ?? 3000;
+        $url = "http://{$ip}:{$port}/print";
+
+        try {
+            $payload = $this->labelService->getLabelPayload($label);
+
+            $response = \Illuminate\Support\Facades\Http::timeout(5)->post($url, [
+                'label_code' => $payload['label_code'],
+                'qr_value' => $payload['qr_value'],
+                'barcode_value' => $payload['barcode_value'],
+                'readable_data' => $payload['readable_data']
+            ]);
+
+            if ($response->successful()) {
+                return response()->json(['message' => 'Webhook inviato con successo alla print app.', 'data' => $payload]);
+            }
+
+            return response()->json([
+                'message' => 'La print app ha risposto con errore.',
+                'details' => config('app.debug') ? $response->body() : null
+            ], 502);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Impossibile raggiungere la print app.',
+                'details' => config('app.debug') ? $e->getMessage() : null
+            ], 504);
+        }
+    }
+
     public function destroy(Label $label)
     {
         $this->audit->logModelChange('deleted', $label, oldValues: $this->audit->snapshot($label));

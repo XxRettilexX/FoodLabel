@@ -44,6 +44,27 @@ export function LotDetailScreen({ route, navigation }: { route: RouteProps; navi
     return new Date(dateStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
   };
 
+  const handlePrint = async () => {
+    if (!lot) return;
+    try {
+      Alert.alert('Stampa in corso', 'Generazione etichetta...');
+      // Estrai l'IP dell'host dal file .env (es. 100.x.x.x o 192.168.x.x)
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || '';
+      const ipMatch = apiUrl.match(/https?:\/\/([^:]+)/);
+      const printerIp = ipMatch ? ipMatch[1] : '127.0.0.1';
+
+      // 1. Crea etichetta a sistema
+      const label = await labelsApi.create(lot.id);
+      
+      // 2. Invia alla print preview app
+      await labelsApi.printNetwork(label.id, printerIp);
+      
+      Alert.alert('Successo', 'Etichetta inviata all\'app di stampa!');
+    } catch (err: any) {
+      Alert.alert('Errore di stampa', err.response?.data?.message || 'Impossibile inviare alla stampante.');
+    }
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <SurfaceCard style={styles.header}>
@@ -67,7 +88,7 @@ export function LotDetailScreen({ route, navigation }: { route: RouteProps; navi
       </SurfaceCard>
       <View style={styles.actionsRow}>
         <SubmitButton label="Registra movimento" onPress={() => navigation.navigate('CreateMovement', { lotId: lot.id })} variant="primary" style={{ flex: 1, marginRight: 8 }} />
-        <SubmitButton label="Etichetta" onPress={() => Alert.alert('Etichetta', 'Generazione etichetta richiesta!')} variant="success" style={{ flex: 1, marginLeft: 8 }} />
+        <SubmitButton label="Etichetta" onPress={handlePrint} variant="success" style={{ flex: 1, marginLeft: 8 }} />
       </View>
       <SurfaceCard style={styles.section}>
         <Text style={styles.sectionTitle}>Storico Movimenti ({lot.movements?.length || 0})</Text>
