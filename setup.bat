@@ -1,22 +1,18 @@
 @echo off
-if /i "%FOODLABEL_SETUP_DEBUG%"=="1" @echo on
 setlocal EnableExtensions EnableDelayedExpansion
 
-REM Run from this script directory (supports being launched elsewhere)
+REM Run from this script directory
 cd /d "%~dp0"
 
 echo.
 echo ===========================
-echo FoodLabel - Setup (Windows)
+echo FoodLabel - Fast Setup
 echo ===========================
 echo Working directory: "%cd%"
 echo.
 
-REM --------- Helpers ---------
+REM Prefer Docker Compose v2, fallback to v1
 set "DOCKER_COMPOSE_CMD="
-set "COMPOSER_CMD="
-
-REM Prefer Docker Compose v2 ("docker compose"), fallback to v1 ("docker-compose")
 docker compose version >nul 2>&1
 if not errorlevel 1 (
     set "DOCKER_COMPOSE_CMD=docker compose"
@@ -27,164 +23,56 @@ if not errorlevel 1 (
     )
 )
 
-REM Prefer global composer; fallback to local composer.phar (requires PHP)
-where composer >nul 2>&1
-if not errorlevel 1 (
-    set "COMPOSER_CMD=composer"
-) else (
-    if exist "%~dp0composer.phar" (
-        where php >nul 2>&1
-        if not errorlevel 1 (
-            set "COMPOSER_CMD=php \"%~dp0composer.phar\""
-        )
-    )
-)
-
-REM --------- Backend deps ---------
-if exist "backend" (
-    pushd "backend" >nul
-
-    if exist "composer.json" (
-        echo Installing PHP dependencies with Composer...
-        if "%COMPOSER_CMD%"=="" (
-            echo ERROR: Composer not available.
-            echo - Install Composer globally, or keep "composer.phar" in project root and have PHP in PATH.
-            popd >nul
-            exit /b 1
-        )
-        %COMPOSER_CMD% install
-        if errorlevel 1 (
-            echo ERROR: Composer install failed.
-            popd >nul
-            exit /b 1
-        )
-    )
-
-    if exist "package.json" (
-        echo Installing Node.js dependencies for backend...
-        where node >nul 2>&1
-        if errorlevel 1 (
-            echo ERROR: Node.js not found in PATH. Install Node.js LTS and retry.
-            popd >nul
-            exit /b 1
-        )
-        where npm >nul 2>&1
-        if errorlevel 1 (
-            echo ERROR: npm not found in PATH. Reinstall/repair Node.js and retry.
-            popd >nul
-            exit /b 1
-        )
-
-        if exist "package-lock.json" (
-            npm ci
-        ) else (
-            npm install
-        )
-        if errorlevel 1 (
-            echo ERROR: Backend npm install failed.
-            popd >nul
-            exit /b 1
-        )
-    )
-
-    popd >nul
-) else (
-    echo WARNING: "backend\" folder not found. Skipping backend dependencies.
-)
-
-REM --------- Frontend deps ---------
-if exist "frontend" (
-    pushd "frontend" >nul
-
-    if exist "package.json" (
-        echo Installing Node.js dependencies for frontend...
-        where node >nul 2>&1
-        if errorlevel 1 (
-            echo ERROR: Node.js not found in PATH. Install Node.js LTS and retry.
-            popd >nul
-            exit /b 1
-        )
-        where npm >nul 2>&1
-        if errorlevel 1 (
-            echo ERROR: npm not found in PATH. Reinstall/repair Node.js and retry.
-            popd >nul
-            exit /b 1
-        )
-
-        if exist "package-lock.json" (
-            npm ci
-        ) else (
-            npm install
-        )
-        if errorlevel 1 (
-            echo ERROR: Frontend npm install failed.
-            popd >nul
-            exit /b 1
-        )
-    ) else (
-        echo WARNING: frontend/package.json not found. Skipping frontend dependencies.
-    )
-
-    popd >nul
-) else (
-    echo WARNING: "frontend\" folder not found. Skipping frontend dependencies.
-)
-
-REM --------- Docker ---------
 if "%DOCKER_COMPOSE_CMD%"=="" (
-    echo ERROR: Docker Compose not found. Install Docker Desktop with Compose and retry.
+    echo ERROR: Docker Compose non trovato. Installa Docker Desktop e riprova.
     exit /b 1
 )
 
-docker info >nul 2>&1
-if errorlevel 1 (
-    echo ERROR: Docker engine not reachable. Start Docker Desktop and retry.
-    exit /b 1
+echo [1/3] Avvio dei container Docker...
+
+if not exist "backend\.env" (
+    echo Creazione del file .env per il backend...
+    copy "backend\.env.example" "backend\.env" >nul
 )
 
-echo Starting Docker containers...
 %DOCKER_COMPOSE_CMD% up -d
 if errorlevel 1 (
-    echo ERROR: Docker Compose failed to start containers.
+    echo ERROR: Docker Compose non e' riuscito ad avviare i container.
     exit /b 1
 )
 
 echo.
-echo Waiting for backend container to be ready...
+echo Attendere il caricamento del backend...
 timeout /t 5 /nobreak >nul
 
+echo Generazione chiave applicazione (se necessaria)...
+%DOCKER_COMPOSE_CMD% exec -T app php artisan key:generate
+
 echo.
-echo ===========================
-echo Running API Tests...
-echo ===========================
+echo [2/3] Esecuzione Test API Backend...
 %DOCKER_COMPOSE_CMD% exec -T app php artisan test
 if errorlevel 1 (
     echo.
-    echo ERROR: API Tests failed!
-    echo Please check the output above to identify which tests failed.
-    echo The backend containers are still running for debugging.
+    echo ERROR: I test delle API sono falliti!
+    echo Controlla l'output qui sopra per capire quale API ha problemi.
     exit /b 1
 )
-echo.
-echo SUCCESS: All API Tests passed!
+echo SUCCESS: Tutti i test API sono passati!
 
 echo.
-echo ===========================
-echo Starting Frontend...
-echo ===========================
+echo [3/3] Avvio del Frontend...
 if exist "frontend" (
     pushd "frontend" >nul
-    echo Starting Expo server in a new window...
     start cmd /k "npm start"
     popd >nul
 ) else (
-    echo WARNING: "frontend\" folder not found. Cannot start frontend.
+    echo WARNING: Cartella "frontend" non trovata. Impossibile avviare Expo.
 )
 
 echo.
 echo ===========================
-echo Setup complete!
-echo - Backend is running via Docker.
-echo - Frontend is starting in a separate window.
+echo Setup Completato con Successo!
+echo - I container Backend (Docker) sono in esecuzione
+echo - Il Frontend si sta aprendo in una nuova finestra
 echo ===========================
 exit /b 0

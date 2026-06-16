@@ -28,21 +28,36 @@ class DatabaseSeeder extends Seeder
 
         $admin = User::firstOrCreate(
             ['email' => 'admin@foodlabel.local'],
-            ['name' => 'Admin User', 'password' => Hash::make('password')]
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+                'account_id' => $account->id,
+                'role' => 'owner',
+                'status' => 'active'
+            ]
         );
-        $admin->forceFill(['account_id' => $account->id, 'role' => 'owner', 'status' => 'active'])->save();
 
         $manager = User::firstOrCreate(
             ['email' => 'manager@foodlabel.local'],
-            ['name' => 'Manager User', 'password' => Hash::make('password')]
+            [
+                'name' => 'Manager User',
+                'password' => Hash::make('password'),
+                'account_id' => $account->id,
+                'role' => 'manager',
+                'status' => 'active'
+            ]
         );
-        $manager->forceFill(['account_id' => $account->id, 'role' => 'manager', 'status' => 'active'])->save();
 
         $operator = User::firstOrCreate(
             ['email' => 'operator@foodlabel.local'],
-            ['name' => 'Operator User', 'password' => Hash::make('password')]
+            [
+                'name' => 'Operator User',
+                'password' => Hash::make('password'),
+                'account_id' => $account->id,
+                'role' => 'warehouse',
+                'status' => 'active'
+            ]
         );
-        $operator->forceFill(['account_id' => $account->id, 'role' => 'warehouse', 'status' => 'active'])->save();
 
         $supplier = Supplier::firstOrCreate(
             ['account_id' => $account->id, 'name' => 'Fattorie Rossi SPA'],
