@@ -85,11 +85,17 @@ class LabelController extends Controller
     public function printToIp(Request $request, Label $label)
     {
         $validated = $request->validate([
-            'printer_ip' => 'required|ip',
+            'printer_ip' => 'required|string', // Cambiato da 'ip' a 'string' per supportare host.docker.internal
             'printer_port' => 'nullable|integer|min:1|max:65535'
         ]);
 
         $ip = $validated['printer_ip'];
+        
+        // Se l'IP è quello di Tailscale (100.x) o localhost, usa host.docker.internal per uscire dal container e raggiungere il PC host
+        if (str_starts_with($ip, '100.') || $ip === '127.0.0.1' || $ip === '10.0.2.2') {
+            $ip = 'host.docker.internal';
+        }
+
         $port = $validated['printer_port'] ?? 3000;
         $url = "http://{$ip}:{$port}/print";
 
