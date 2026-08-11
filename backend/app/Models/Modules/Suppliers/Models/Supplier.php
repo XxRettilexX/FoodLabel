@@ -13,7 +13,11 @@ class Supplier extends Model
 
     protected $fillable = ['account_id', 'name', 'contact_email', 'vat_number'];
 
-    public function products() { 
-        return $this->hasMany(\App\Models\Modules\Products\Models\Product::class); 
+    public function products() {
+        return $this->hasMany(\App\Models\Modules\Products\Models\Product::class);
+    }
+
+    public function deliveryInvoices() {
+        return $this->hasMany(\App\Models\Modules\Invoices\Models\DeliveryInvoice::class);
     }
 }

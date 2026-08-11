@@ -91,6 +91,9 @@ export const radii = {
   lg: 16,
   xl: 20,
   pill: 999,
+  // Alias di `pill` (stesso effetto: rounding completo su elementi piccoli come avatar/badge).
+  // Nome allineato a design-system/MASTER.md §Appendix A, dove alcune schermate lo referenziano come `full`.
+  full: 9999,
 };
 
 export const shadows = {

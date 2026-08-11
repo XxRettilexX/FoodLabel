@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\AuditLog;
 use App\Models\Modules\Alerts\Models\Alert;
+use App\Models\Modules\Invoices\Models\DeliveryInvoice;
 use App\Models\Modules\InventoryMovements\Models\InventoryMovement;
 use App\Models\Modules\Labels\Models\Label;
 use App\Models\Modules\Lots\Models\Lot;
@@ -13,6 +14,7 @@ use App\Models\Modules\Recipes\Models\Recipe;
 use App\Models\Modules\Suppliers\Models\Supplier;
 use App\Policies\AlertPolicy;
 use App\Policies\AuditLogPolicy;
+use App\Policies\DeliveryInvoicePolicy;
 use App\Policies\InventoryMovementPolicy;
 use App\Policies\LabelPolicy;
 use App\Policies\LotPolicy;
@@ -34,6 +36,7 @@ class AuthServiceProvider extends ServiceProvider
         Supplier::class => SupplierPolicy::class,
         Alert::class => AlertPolicy::class,
         AuditLog::class => AuditLogPolicy::class,
+        DeliveryInvoice::class => DeliveryInvoicePolicy::class,
     ];
 
     public function boot(): void

@@ -11,7 +11,7 @@ import { StatusBadge } from '../../shared/components/StatusBadge';
 import { Lot } from '../../shared/types';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
 import { colors, radii, spacing, typography } from '../../core/theme/tokens';
-import { ActionIcons, ICON_SIZE, ICON_STROKE } from '../../core/theme/icons';
+import { ActionIcons, DomainIcons, ICON_SIZE, ICON_STROKE } from '../../core/theme/icons';
 
 type NavigationProp = NativeStackNavigationProp<LotsStackParamList, 'LotsList'>;
 
@@ -75,6 +75,10 @@ export function LotsListScreen({ navigation }: { navigation: NavigationProp }) {
         <TouchableOpacity style={[styles.actionBtn, styles.actionSecondary]} onPress={() => navigation.navigate('ScanLotLabel')} activeOpacity={0.85}>
           <ActionIcons.Scan size={ICON_SIZE.inline} color={colors.text} strokeWidth={ICON_STROKE} />
           <Text style={[styles.actionText, styles.actionTextSecondary]}>Scansiona</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.actionBtn, styles.actionSecondary]} onPress={() => navigation.navigate('InvoiceScan')} activeOpacity={0.85}>
+          <DomainIcons.Invoice size={ICON_SIZE.inline} color={colors.text} strokeWidth={ICON_STROKE} />
+          <Text style={[styles.actionText, styles.actionTextSecondary]}>Fattura</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.navigate('CreateLot')} activeOpacity={0.85}>
           <ActionIcons.Add size={ICON_SIZE.inline} color={colors.onPrimary} strokeWidth={ICON_STROKE} />

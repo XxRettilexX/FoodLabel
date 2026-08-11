@@ -12,12 +12,12 @@ class SupplierPolicy
 
     public function viewAny(User $user): bool
     {
-        return $this->canManage($user);
+        return $this->canRead($user);
     }
 
     public function view(User $user, Supplier $supplier): bool
     {
-        return $this->canManage($user) && $this->belongsToAccount($user, $supplier);
+        return $this->canRead($user) && $this->belongsToAccount($user, $supplier);
     }
 
     public function create(User $user): bool

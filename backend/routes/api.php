@@ -10,6 +10,7 @@ use App\Http\Controllers\Modules\Recipes\Controllers\RecipeController;
 use App\Http\Controllers\Modules\Productions\Controllers\ProductionController;
 use App\Http\Controllers\Modules\Traceability\Controllers\TraceabilityController;
 use App\Http\Controllers\Modules\Audit\Controllers\AuditLogController;
+use App\Http\Controllers\Modules\Invoices\Controllers\InvoiceController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Modules\Auth\Controllers\AuthController;
@@ -24,7 +25,10 @@ Route::prefix('v1')->group(function () {
         Route::middleware('role:owner,manager')->group(function () {
             Route::get('audit-logs', [AuditLogController::class, 'index']);
             Route::get('audit-logs/{audit_log}', [AuditLogController::class, 'show']);
-            Route::apiResource('suppliers', SupplierController::class);
+            Route::post('suppliers', [SupplierController::class, 'store']);
+            Route::put('suppliers/{supplier}', [SupplierController::class, 'update']);
+            Route::patch('suppliers/{supplier}', [SupplierController::class, 'update']);
+            Route::delete('suppliers/{supplier}', [SupplierController::class, 'destroy']);
             Route::post('products', [ProductController::class, 'store']);
             Route::put('products/{product}', [ProductController::class, 'update']);
             Route::patch('products/{product}', [ProductController::class, 'update']);
@@ -36,6 +40,8 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::middleware('role:owner,manager,warehouse,kitchen,viewer')->group(function () {
+            Route::get('suppliers', [SupplierController::class, 'index']);
+            Route::get('suppliers/{supplier}', [SupplierController::class, 'show']);
             Route::get('products', [ProductController::class, 'index']);
             Route::get('products/by-barcode/{barcode}', [ProductController::class, 'findByBarcode']);
             Route::get('products/{product}', [ProductController::class, 'show']);
@@ -53,6 +59,8 @@ Route::prefix('v1')->group(function () {
             Route::get('labels/{label}', [LabelController::class, 'show'])->middleware('throttle:scan');
             Route::get('alerts', [AlertController::class, 'index']);
             Route::get('alerts/{alert}', [AlertController::class, 'show']);
+            Route::get('invoices', [InvoiceController::class, 'index']);
+            Route::get('invoices/{delivery_invoice}', [InvoiceController::class, 'show']);
         });
 
         Route::middleware('role:owner,manager,warehouse,kitchen')->group(function () {
@@ -67,6 +75,10 @@ Route::prefix('v1')->group(function () {
             Route::post('labels/{label}/print-network', [LabelController::class, 'printToIp']);
             Route::delete('labels/{label}', [LabelController::class, 'destroy'])->middleware('throttle:scan');
             Route::post('alerts/refresh', [AlertController::class, 'refresh']);
+            Route::post('invoices/scan', [InvoiceController::class, 'store'])->middleware('throttle:scan');
+            Route::patch('invoices/{delivery_invoice}/line-items/{line_item}', [InvoiceController::class, 'updateLineItem']);
+            Route::post('invoices/{delivery_invoice}/confirm', [InvoiceController::class, 'confirm']);
+            Route::delete('invoices/{delivery_invoice}', [InvoiceController::class, 'destroy']);
         });
     });
 });

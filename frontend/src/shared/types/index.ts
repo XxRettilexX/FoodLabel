@@ -234,3 +234,54 @@ export interface CreateProductionPayload {
     notes?: string;
   }>;
 }
+
+// ── DeliveryInvoice / InvoiceLineItem ────────────────
+
+export type InvoiceStatus = 'pending' | 'reviewing' | 'confirmed' | 'failed';
+export type InvoiceLineItemStatus = 'pending' | 'confirmed' | 'rejected';
+
+export interface InvoiceLineItem extends Timestamps {
+  id: number;
+  delivery_invoice_id: number;
+  product_id: number | null;
+  lot_id: number | null;
+  raw_product_name: string;
+  quantity: number | string;
+  unit: LotUnit;
+  batch_number: string | null;
+  expires_at: string | null;
+  confidence_score: number | string;
+  status: InvoiceLineItemStatus;
+  product?: Product | null;
+  lot?: Lot | null;
+}
+
+export interface DeliveryInvoice extends Timestamps {
+  id: number;
+  account_id: number;
+  supplier_id: number;
+  user_id: number | null;
+  invoice_number: string | null;
+  invoice_date: string | null;
+  file_path: string;
+  file_mime: string | null;
+  status: InvoiceStatus;
+  failure_reason: string | null;
+  supplier?: Supplier | null;
+  lineItems?: InvoiceLineItem[];
+}
+
+export interface UpdateInvoiceLineItemPayload {
+  product_id?: number | null;
+  raw_product_name?: string;
+  quantity?: number;
+  unit?: LotUnit;
+  batch_number?: string | null;
+  expires_at?: string | null;
+  status?: InvoiceLineItemStatus;
+}
+
+export interface ConfirmInvoiceResult {
+  invoice: DeliveryInvoice;
+  lots: Lot[];
+}

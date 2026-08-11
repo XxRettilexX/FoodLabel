@@ -62,6 +62,8 @@ export const ICON_SIZE = {
   navbar: 24,
   header: 20,
   list: 18,
+  // Alias di `list`: stessa categoria semantica (icone dentro righe/badge di contenuto).
+  md: 18,
   emptyState: 48,
   badge: 14,
   inline: 16,

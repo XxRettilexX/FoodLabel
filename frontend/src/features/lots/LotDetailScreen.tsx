@@ -11,6 +11,7 @@ import { StatusBadge } from '../../shared/components/StatusBadge';
 import { AppButton } from '../../shared/components/AppButton';
 import { Lot, InventoryMovement, MovementType } from '../../shared/types';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
+import { PrintLabelButton } from '../printer/PrintLabelButton';
 import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 import { MovementIcons, ICON_SIZE, ICON_STROKE } from '../../core/theme/icons';
 
@@ -89,8 +90,9 @@ export function LotDetailScreen({ route, navigation }: { route: RouteProps; navi
       </SurfaceCard>
       <View style={styles.actionsRow}>
         <AppButton label="Registra movimento" onPress={() => navigation.navigate('CreateMovement', { lotId: lot.id })} variant="primary" style={{ flex: 1, marginRight: spacing[2] }} />
-        <AppButton label="Etichetta" onPress={handlePrint} variant="success" style={{ flex: 1, marginLeft: spacing[2] }} />
+        <AppButton label="Etichetta (rete)" onPress={handlePrint} variant="secondary" style={{ flex: 1, marginLeft: spacing[2] }} />
       </View>
+      <PrintLabelButton lotId={lot.id} style={{ marginBottom: spacing[4] }} />
       <SurfaceCard style={styles.section}>
         <Text style={styles.sectionTitle}>Storico Movimenti ({lot.movements?.length || 0})</Text>
         {lot.movements && lot.movements.length > 0 ? lot.movements.map((m: InventoryMovement) => {
