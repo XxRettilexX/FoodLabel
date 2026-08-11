@@ -3,7 +3,6 @@ import { Platform, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { DashboardScreen } from '../../features/dashboard/DashboardScreen';
 import { LotsNavigator } from '../../features/lots/LotsNavigator';
-import { ProfileScreen } from '../../features/profile/ProfileScreen';
 import { AlertsScreen } from '../../features/alerts/AlertsScreen';
 import { ProductsNavigator } from '../../features/products/ProductsNavigator';
 import { PreparationNavigator } from '../../features/preparation/PreparationNavigator';
@@ -33,7 +32,6 @@ export function TabNavigator() {
       <Tab.Screen name="Lotti" component={LotsNavigator} />
       <Tab.Screen name="Ricette" component={PreparationNavigator} />
       <Tab.Screen name="Alert" component={AlertsScreen} />
-      <Tab.Screen name="Profilo" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
@@ -41,9 +39,9 @@ export function TabNavigator() {
 const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: colors.surface,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(0, 0, 0, 0.08)',
-    height: Platform.OS === 'ios' ? 88 : 64,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    height: Platform.OS === 'ios' ? 88 : 64, // 64 is the safe area + height on android/old ios
     paddingTop: 6,
     paddingBottom: Platform.OS === 'ios' ? 28 : 8,
   },

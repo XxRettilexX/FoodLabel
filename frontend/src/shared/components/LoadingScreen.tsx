@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography } from '../../core/theme/tokens';
 
 interface LoadingScreenProps {
   color?: string;
@@ -22,10 +22,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.bg,
-    gap: 10,
+    gap: spacing[2],
   },
   label: {
     color: colors.textTertiary,
-    fontSize: 13,
+    fontSize: typography.sizes.caption,
   },
 });

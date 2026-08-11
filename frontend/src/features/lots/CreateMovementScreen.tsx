@@ -9,17 +9,20 @@ import { useApiSubmit } from '../../shared/hooks/useApiSubmit';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { FormField } from '../../shared/components/FormField';
-import { SubmitButton } from '../../shared/components/SubmitButton';
+import { AppButton } from '../../shared/components/AppButton';
 import { StatusBadge } from '../../shared/components/StatusBadge';
+import { SurfaceCard } from '../../shared/components/SurfaceCard';
 import { Lot, CreateMovementPayload, MovementType } from '../../shared/types';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
+import { MovementIcons, ICON_SIZE, ICON_STROKE } from '../../core/theme/icons';
 
 type RouteProps = RouteProp<LotsStackParamList, 'CreateMovement'>;
 type NavProps = NativeStackNavigationProp<LotsStackParamList, 'CreateMovement'>;
 
-const MOVEMENT_TYPES: { value: MovementType; label: string; icon: string; desc: string }[] = [
-  { value: 'IN', label: 'Carico', icon: '📥', desc: 'Aggiunge quantità al lotto' },
-  { value: 'OUT', label: 'Scarico', icon: '📤', desc: 'Rimuove quantità dal lotto' },
-  { value: 'ADJUST', label: 'Rettifica', icon: '🔄', desc: 'Imposta la giacenza esatta' },
+const MOVEMENT_TYPES: { value: MovementType; label: string; Icon: any; desc: string, color: string }[] = [
+  { value: 'IN', label: 'Carico', Icon: MovementIcons.IN, desc: 'Aggiunge quantità al lotto', color: colors.success },
+  { value: 'OUT', label: 'Scarico', Icon: MovementIcons.OUT, desc: 'Rimuove quantità dal lotto', color: colors.danger },
+  { value: 'ADJUST', label: 'Rettifica', Icon: MovementIcons.ADJUST, desc: 'Imposta la giacenza esatta', color: colors.warning },
 ];
 
 export function CreateMovementScreen({ route, navigation }: { route: RouteProps; navigation: NavProps }) {
@@ -50,7 +53,7 @@ export function CreateMovementScreen({ route, navigation }: { route: RouteProps;
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       {lot && (
-        <View style={styles.lotContext}>
+        <SurfaceCard style={styles.lotContext}>
           <View style={styles.lotContextHeader}>
             <Text style={styles.lotBatch}>{lot.batch_number}</Text>
             <StatusBadge status={lot.status} />
@@ -60,17 +63,20 @@ export function CreateMovementScreen({ route, navigation }: { route: RouteProps;
             <Text style={styles.lotQtyLabel}>Giacenza attuale:</Text>
             <Text style={styles.lotQtyValue}>{lot.current_quantity} {lot.unit}</Text>
           </View>
-        </View>
+        </SurfaceCard>
       )}
       <Text style={styles.sectionLabel}>TIPO MOVIMENTO</Text>
       <View style={styles.typeRow}>
-        {MOVEMENT_TYPES.map((mt) => (
-          <TouchableOpacity key={mt.value} style={[styles.typeCard, type === mt.value && styles.typeCardSelected]} onPress={() => setType(mt.value)} activeOpacity={0.7}>
-            <Text style={styles.typeIcon}>{mt.icon}</Text>
-            <Text style={[styles.typeLabel, type === mt.value && styles.typeLabelSelected]}>{mt.label}</Text>
-            <Text style={styles.typeDesc}>{mt.desc}</Text>
-          </TouchableOpacity>
-        ))}
+        {MOVEMENT_TYPES.map((mt) => {
+          const Icon = mt.Icon;
+          return (
+            <TouchableOpacity key={mt.value} style={[styles.typeCard, type === mt.value && styles.typeCardSelected]} onPress={() => setType(mt.value)} activeOpacity={0.7}>
+              <Icon size={ICON_SIZE.md} color={type === mt.value ? mt.color : colors.textTertiary} strokeWidth={ICON_STROKE} />
+              <Text style={[styles.typeLabel, type === mt.value && { color: mt.color }]}>{mt.label}</Text>
+              <Text style={styles.typeDesc}>{mt.desc}</Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
       <FormField label={type === 'ADJUST' ? 'Nuova giacenza *' : `Quantità da ${type === 'IN' ? 'caricare' : 'scaricare'} *`} value={quantity} onChangeText={setQuantity} placeholder={type === 'ADJUST' ? 'Nuova giacenza esatta' : '0'} keyboardType="numeric" error={fieldErrors.quantity?.[0]} />
       {lot && quantity && !isNaN(Number(quantity)) && (
@@ -83,30 +89,28 @@ export function CreateMovementScreen({ route, navigation }: { route: RouteProps;
       )}
       <FormField label="Note" value={notes} onChangeText={setNotes} placeholder="Motivo del movimento..." multiline />
       {/* BUG 7 FIX: Added !Number.isFinite(Number(quantity)) to disabled check to prevent NaN submission */}
-      <SubmitButton label="Registra Movimento" onPress={handleSubmit} loading={submitting} disabled={!quantity || !Number.isFinite(Number(quantity)) || Number(quantity) <= 0} variant={type === 'OUT' ? 'danger' : type === 'IN' ? 'success' : 'primary'} style={{ marginTop: 8 }} />
+      <AppButton label="Registra Movimento" onPress={handleSubmit} loading={submitting} disabled={!quantity || !Number.isFinite(Number(quantity)) || Number(quantity) <= 0} variant={type === 'OUT' ? 'danger' : type === 'IN' ? 'success' : 'primary'} style={{ marginTop: spacing[2] }} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  content: { padding: 20, paddingBottom: 40 },
-  lotContext: { backgroundColor: '#fff', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: '#e5e7eb', marginBottom: 20 },
-  lotContextHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  lotBatch: { fontSize: 18, fontWeight: '700', color: '#1f2937' },
-  lotProduct: { fontSize: 13, color: '#6b7280', marginBottom: 8 },
+  container: { flex: 1, backgroundColor: colors.bg },
+  content: { padding: spacing[4], paddingBottom: spacing[10] },
+  lotContext: { padding: spacing[4], marginBottom: spacing[5] },
+  lotContextHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing[1] },
+  lotBatch: { fontSize: typography.sizes.heading, fontWeight: '700', color: colors.text, fontFamily: 'monospace' },
+  lotProduct: { fontSize: typography.sizes.body, color: colors.textSecondary, marginBottom: spacing[2] },
   lotQtyRow: { flexDirection: 'row', alignItems: 'center' },
-  lotQtyLabel: { fontSize: 13, color: '#9ca3af', marginRight: 6 },
-  lotQtyValue: { fontSize: 16, fontWeight: '700', color: '#2563eb' },
-  sectionLabel: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 },
-  typeRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
-  typeCard: { flex: 1, backgroundColor: '#fff', padding: 12, borderRadius: 12, borderWidth: 1.5, borderColor: '#d1d5db', alignItems: 'center' },
-  typeCardSelected: { borderColor: '#2563eb', backgroundColor: '#eff6ff' },
-  typeIcon: { fontSize: 22, marginBottom: 4 },
-  typeLabel: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 2 },
-  typeLabelSelected: { color: '#2563eb' },
-  typeDesc: { fontSize: 10, color: '#9ca3af', textAlign: 'center', lineHeight: 13 },
-  preview: { backgroundColor: '#f0fdf4', padding: 12, borderRadius: 10, borderWidth: 1, borderColor: '#bbf7d0', marginBottom: 16 },
-  previewLabel: { fontSize: 11, color: '#166534', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
-  previewValue: { fontSize: 15, fontWeight: '700', color: '#166534' },
+  lotQtyLabel: { fontSize: typography.sizes.body, color: colors.textTertiary, marginRight: spacing[1] },
+  lotQtyValue: { fontSize: typography.sizes.bodyMedium, fontWeight: '700', color: colors.primary, fontFamily: 'monospace' },
+  sectionLabel: { fontSize: 11, fontWeight: '600', color: colors.textTertiary, marginBottom: spacing[2], textTransform: 'uppercase', letterSpacing: 0.5 },
+  typeRow: { flexDirection: 'row', gap: spacing[2], marginBottom: spacing[5] },
+  typeCard: { flex: 1, backgroundColor: colors.surface, padding: spacing[3], borderRadius: radii.md, borderWidth: 1.5, borderColor: colors.border, alignItems: 'center' },
+  typeCardSelected: { borderColor: colors.primary, backgroundColor: colors.surfaceMuted },
+  typeLabel: { fontSize: typography.sizes.body, fontWeight: '600', color: colors.textSecondary, marginTop: spacing[1], marginBottom: 2 },
+  typeDesc: { fontSize: typography.sizes.caption, color: colors.textTertiary, textAlign: 'center', lineHeight: 13 },
+  preview: { backgroundColor: '#F0FDF4', padding: spacing[3], borderRadius: radii.sm, borderWidth: 1, borderColor: '#BBF7D0', marginBottom: spacing[4] },
+  previewLabel: { fontSize: 11, color: colors.success, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: spacing[1] },
+  previewValue: { fontSize: typography.sizes.bodyMedium, fontWeight: '700', color: colors.success, fontFamily: 'monospace' },
 });

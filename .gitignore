@@ -24,4 +24,15 @@ frontend/.env
 Thumbs.db
 
 
+# AI and Agents
 .claude/
+.agents/
+.gemini/
+
+# IDEs
+.idea/
+.vscode/
+
+# Composer binaries
+composer.phar
+composer-setup.php

@@ -6,7 +6,7 @@ import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { EmptyState } from '../../shared/components/EmptyState';
 import { useApiData } from '../../shared/hooks/useApiData';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 type FilterType = 'all' | AlertType;
 
@@ -49,9 +49,9 @@ export function AlertsScreen({ navigation }: { navigation: any }) {
 
   const headerStats = useMemo(
     () => [
-      { label: 'Scaduti', value: data.counts.expired, color: '#b91c1c' },
-      { label: 'In scadenza', value: data.counts.expiring_soon, color: '#d97706' },
-      { label: 'Sotto soglia', value: data.counts.low_stock, color: '#2563eb' },
+      { label: 'Scaduti', value: data.counts.expired, color: colors.danger },
+      { label: 'In scadenza', value: data.counts.expiring_soon, color: colors.warning },
+      { label: 'Sotto soglia', value: data.counts.low_stock, color: colors.primary },
     ],
     [data.counts]
   );
@@ -107,10 +107,10 @@ export function AlertsScreen({ navigation }: { navigation: any }) {
               <View
                 style={[
                   styles.priorityBadge,
-                  { backgroundColor: `${PRIORITY_COLORS[item.priority] ?? '#6b7280'}20` },
+                  { backgroundColor: `${PRIORITY_COLORS[item.priority] ?? colors.textTertiary}20` },
                 ]}
               >
-                <Text style={[styles.priorityText, { color: PRIORITY_COLORS[item.priority] ?? '#6b7280' }]}>
+                <Text style={[styles.priorityText, { color: PRIORITY_COLORS[item.priority] ?? colors.textTertiary }]}>
                   {item.priority.toUpperCase()}
                 </Text>
               </View>
@@ -129,37 +129,38 @@ export function AlertsScreen({ navigation }: { navigation: any }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  header: { paddingHorizontal: 16, paddingTop: 16 },
-  title: { fontSize: 28, fontWeight: '800', color: colors.text },
-  subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4 },
-  statsRow: { flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingTop: 12 },
+  header: { paddingHorizontal: spacing[4], paddingTop: spacing[4] },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  subtitle: { fontSize: typography.sizes.label, color: colors.textSecondary, marginTop: spacing[1] },
+  statsRow: { flexDirection: 'row', gap: spacing[2], paddingHorizontal: spacing[4], paddingTop: spacing[3] },
   statCard: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: spacing[3],
     alignItems: 'center',
+    borderRadius: radii.md,
   },
-  statValue: { fontSize: 18, fontWeight: '800' },
-  statLabel: { fontSize: 11, color: '#6b7280', marginTop: 2 },
-  filtersRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, padding: 16 },
+  statValue: { fontSize: typography.sizes.heading, fontWeight: '800' },
+  statLabel: { fontSize: 11, color: colors.textTertiary, marginTop: spacing[1] },
+  filtersRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], padding: spacing[4] },
   filterChip: {
     backgroundColor: colors.surface,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.border,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing[3],
+    paddingVertical: spacing[2],
   },
   filterChipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  filterText: { color: colors.textSecondary, fontWeight: '600', fontSize: 12 },
-  filterTextActive: { color: '#fff' },
-  listContent: { paddingHorizontal: 16, paddingBottom: 20 },
+  filterText: { color: colors.textSecondary, fontWeight: '600', fontSize: typography.sizes.caption },
+  filterTextActive: { color: colors.onPrimary },
+  listContent: { paddingHorizontal: spacing[4], paddingBottom: spacing[5] },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: radii.md,
+    borderWidth: 1.5,
     borderColor: colors.border,
-    padding: 14,
-    marginBottom: 10,
+    padding: spacing[4],
+    marginBottom: spacing[3],
     position: 'relative',
   },
   accent: {
@@ -167,14 +168,14 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    width: 5,
-    borderTopLeftRadius: 12,
-    borderBottomLeftRadius: 12,
+    width: 6,
+    borderTopLeftRadius: radii.md,
+    borderBottomLeftRadius: radii.md,
   },
-  cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: colors.text, paddingLeft: 6 },
-  priorityBadge: { borderRadius: 999, paddingHorizontal: 8, paddingVertical: 3 },
+  cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing[2] },
+  cardTitle: { fontSize: typography.sizes.bodyMedium, fontWeight: '700', color: colors.text, paddingLeft: spacing[2] },
+  priorityBadge: { borderRadius: radii.pill, paddingHorizontal: spacing[2], paddingVertical: 4 },
   priorityText: { fontSize: 11, fontWeight: '700' },
-  message: { fontSize: 13, color: colors.textSecondary, marginBottom: 8, paddingLeft: 6 },
-  meta: { fontSize: 12, color: colors.textTertiary, paddingLeft: 6 },
+  message: { fontSize: typography.sizes.body, color: colors.textSecondary, marginBottom: spacing[2], paddingLeft: spacing[2] },
+  meta: { fontSize: typography.sizes.caption, color: colors.textTertiary, paddingLeft: spacing[2] },
 });

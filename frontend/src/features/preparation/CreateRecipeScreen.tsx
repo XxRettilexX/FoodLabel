@@ -8,10 +8,10 @@ import { useApiSubmit } from '../../shared/hooks/useApiSubmit';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { FormField } from '../../shared/components/FormField';
-import { SubmitButton } from '../../shared/components/SubmitButton';
+import { AppButton } from '../../shared/components/AppButton';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { PreparationStackParamList } from './PreparationNavigator';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 type NavProps = NativeStackNavigationProp<PreparationStackParamList, 'CreateRecipe'>;
 
@@ -106,7 +106,7 @@ export function CreateRecipeScreen({ navigation }: { navigation: NavProps }) {
       {items.map((item, index) => (
         <View key={`item-${index}`} style={styles.itemBlock}>
           <Text style={styles.itemLabel}>Ingrediente #{index + 1}</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing[2], marginBottom: spacing[3] }}>
             {products.map((p) => (
               <TouchableOpacity key={`${index}-${p.id}`} onPress={() => updateItem(index, { product_id: p.id, unit: p.base_unit || 'pcs' })} style={[styles.productChip, item.product_id === p.id && styles.productChipActive]}>
                 <Text style={[styles.productChipText, item.product_id === p.id && styles.productChipTextActive]}>{p.name}</Text>
@@ -115,37 +115,37 @@ export function CreateRecipeScreen({ navigation }: { navigation: NavProps }) {
           </ScrollView>
           <View style={styles.row}>
             <View style={{ flex: 1 }}><FormField label="Quantita" value={item.quantity} onChangeText={(v) => updateItem(index, { quantity: v })} keyboardType="numeric" /></View>
-            <View style={{ width: 92, marginLeft: 8 }}><FormField label="Unita" value={item.unit} onChangeText={(v) => updateItem(index, { unit: v as MeasureUnit })} /></View>
+            <View style={{ width: 92, marginLeft: spacing[2] }}><FormField label="Unita" value={item.unit} onChangeText={(v) => updateItem(index, { unit: v as MeasureUnit })} /></View>
           </View>
           <FormField label="Note" value={item.notes} onChangeText={(v) => updateItem(index, { notes: v })} />
           <TouchableOpacity onPress={() => removeItem(index)}><Text style={styles.removeText}>Rimuovi ingrediente</Text></TouchableOpacity>
         </View>
       ))}
 
-      <SubmitButton label="Salva ricetta" onPress={handleSave} loading={submitting} disabled={!name.trim()} style={{ marginTop: 8 }} />
+      <AppButton label="Salva ricetta" onPress={handleSave} loading={submitting} disabled={!name.trim()} style={{ marginTop: spacing[2] }} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 20, paddingBottom: 30 },
-  title: { fontSize: 28, fontWeight: '800', color: colors.text },
-  subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4, marginBottom: 14 },
-  section: { fontSize: 12, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
-  unitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 },
-  unitChip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 9, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
-  unitChipActive: { borderColor: colors.primary, backgroundColor: '#dbeafe' },
-  unitChipText: { color: colors.textSecondary, fontWeight: '600' },
+  content: { padding: spacing[5], paddingBottom: spacing[8] },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  subtitle: { fontSize: typography.sizes.bodyMedium, color: colors.textSecondary, marginTop: spacing[1], marginBottom: spacing[4] },
+  section: { fontSize: 11, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: spacing[2] },
+  unitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[4] },
+  unitChip: { paddingHorizontal: spacing[3], paddingVertical: spacing[2], borderRadius: radii.md, borderWidth: 1.5, borderColor: colors.border, backgroundColor: colors.surface },
+  unitChipActive: { borderColor: colors.primary, backgroundColor: colors.surfaceMuted },
+  unitChipText: { color: colors.textSecondary, fontWeight: '600', fontSize: typography.sizes.body },
   unitChipTextActive: { color: colors.primary },
-  ingredientsHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  addText: { color: colors.primary, fontWeight: '700' },
-  itemBlock: { backgroundColor: colors.surface, borderRadius: 12, borderWidth: 1, borderColor: colors.border, padding: 12, marginBottom: 12 },
-  itemLabel: { fontSize: 13, fontWeight: '700', color: colors.text, marginBottom: 8 },
-  productChip: { paddingHorizontal: 10, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surfaceMuted },
-  productChipActive: { borderColor: colors.primary, backgroundColor: '#dbeafe' },
-  productChipText: { fontSize: 12, color: colors.textSecondary, fontWeight: '600' },
+  ingredientsHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing[2] },
+  addText: { color: colors.primary, fontWeight: '700', fontSize: typography.sizes.body },
+  itemBlock: { backgroundColor: colors.surface, borderRadius: radii.md, borderWidth: 1.5, borderColor: colors.border, padding: spacing[3], marginBottom: spacing[3] },
+  itemLabel: { fontSize: typography.sizes.bodyMedium, fontWeight: '700', color: colors.text, marginBottom: spacing[2] },
+  productChip: { paddingHorizontal: spacing[3], paddingVertical: spacing[2], borderRadius: radii.sm, borderWidth: 1.5, borderColor: colors.border, backgroundColor: colors.surfaceMuted },
+  productChipActive: { borderColor: colors.primary, backgroundColor: colors.surfaceMuted },
+  productChipText: { fontSize: typography.sizes.caption, color: colors.textSecondary, fontWeight: '600' },
   productChipTextActive: { color: colors.primary },
   row: { flexDirection: 'row' },
-  removeText: { color: '#b91c1c', fontWeight: '600', marginTop: 2 },
+  removeText: { color: colors.danger, fontWeight: '600', marginTop: spacing[1], fontSize: typography.sizes.body },
 });

@@ -4,7 +4,7 @@ import { AppButton } from '../../shared/components/AppButton';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
 import { productsApi } from './api';
 import { Product } from '../../shared/types';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 import { useNavigation } from '@react-navigation/native';
 
 export function ProductBarcodeSearchScreen() {
@@ -60,7 +60,7 @@ export function ProductBarcodeSearchScreen() {
             label="Apri dettaglio"
             variant="secondary"
             onPress={() => navigation.navigate('ProductDetail', { productId: result.id })}
-            style={{ marginTop: 8 }}
+            style={{ marginTop: spacing[2] }}
           />
         </SurfaceCard>
       ) : null}
@@ -69,12 +69,12 @@ export function ProductBarcodeSearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg, padding: 20 },
-  title: { fontSize: 28, fontWeight: '800', color: colors.text },
-  subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4, marginBottom: 12 },
-  input: { borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 14, color: colors.text, backgroundColor: colors.surface, marginBottom: 10 },
-  error: { marginTop: 12, color: '#b91c1c', fontSize: 13 },
-  resultCard: { marginTop: 14 },
-  resultTitle: { fontSize: 18, fontWeight: '800', color: colors.text, marginBottom: 6 },
-  resultLine: { color: colors.textSecondary, fontSize: 13, marginBottom: 3 },
+  container: { flex: 1, backgroundColor: colors.bg, padding: spacing[5] },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  subtitle: { fontSize: typography.sizes.bodyMedium, color: colors.textSecondary, marginTop: spacing[1], marginBottom: spacing[4] },
+  input: { borderWidth: 1.5, borderColor: colors.border, borderRadius: radii.md, paddingHorizontal: spacing[4], paddingVertical: 14, fontSize: typography.sizes.body, color: colors.text, backgroundColor: colors.surface, marginBottom: spacing[3], minHeight: 52 },
+  error: { marginTop: spacing[3], color: colors.danger, fontSize: typography.sizes.caption },
+  resultCard: { marginTop: spacing[4], padding: spacing[4] },
+  resultTitle: { fontSize: typography.sizes.heading, fontWeight: '800', color: colors.text, marginBottom: spacing[2] },
+  resultLine: { color: colors.textSecondary, fontSize: typography.sizes.body, marginBottom: spacing[1] },
 });

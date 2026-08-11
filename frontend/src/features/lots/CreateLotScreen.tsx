@@ -9,8 +9,9 @@ import { useApiSubmit } from '../../shared/hooks/useApiSubmit';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { FormField } from '../../shared/components/FormField';
-import { SubmitButton } from '../../shared/components/SubmitButton';
+import { AppButton } from '../../shared/components/AppButton';
 import { Product, CreateLotPayload, LotUnit } from '../../shared/types';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 type NavProps = NativeStackNavigationProp<LotsStackParamList, 'CreateLot'>;
 
@@ -74,10 +75,10 @@ export function CreateLotScreen({ navigation }: { navigation: NavProps }) {
 
       <FormField label="Codice Lotto *" value={batchNumber} onChangeText={setBatchNumber} placeholder="es. LOT-2026-042" error={fieldErrors.batch_number?.[0]} />
       <View style={styles.row}>
-        <View style={{ flex: 1, marginRight: 8 }}>
+        <View style={{ flex: 1, marginRight: spacing[2] }}>
           <FormField label="Quantità *" value={quantity} onChangeText={setQuantity} placeholder="0" keyboardType="numeric" error={fieldErrors.initial_quantity?.[0]} />
         </View>
-        <View style={{ flex: 1, marginLeft: 8 }}>
+        <View style={{ flex: 1, marginLeft: spacing[2] }}>
           <Text style={styles.unitLabel}>UNITÀ *</Text>
           <View style={styles.unitRow}>
             {UNITS.map((u) => (
@@ -91,28 +92,28 @@ export function CreateLotScreen({ navigation }: { navigation: NavProps }) {
       <FormField label="Data Scadenza * (YYYY-MM-DD)" value={expiresAt} onChangeText={setExpiresAt} placeholder="2026-05-22" error={fieldErrors.expires_at?.[0]} />
       <FormField label="Data Produzione (YYYY-MM-DD)" value={producedAt} onChangeText={setProducedAt} placeholder="2026-04-22" error={fieldErrors.produced_at?.[0]} />
       <FormField label="Note" value={notes} onChangeText={setNotes} placeholder="Eventuali annotazioni..." multiline />
-      <SubmitButton label="Crea Lotto" onPress={handleSubmit} loading={submitting} disabled={!productId || !batchNumber.trim() || !quantity || !Number.isFinite(Number(quantity)) || Number(quantity) <= 0} style={{ marginTop: 8 }} />
+      <AppButton label="Crea Lotto" onPress={handleSubmit} loading={submitting} disabled={!productId || !batchNumber.trim() || !quantity || !Number.isFinite(Number(quantity)) || Number(quantity) <= 0} style={{ marginTop: spacing[2] }} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
-  content: { padding: 20, paddingBottom: 40 },
-  sectionLabel: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 },
-  noProducts: { fontSize: 13, color: '#ef4444', marginBottom: 16 },
-  productScroller: { marginBottom: 20 },
-  productScrollerContent: { gap: 8 },
-  productChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#d1d5db' },
-  productChipSelected: { backgroundColor: '#2563eb', borderColor: '#2563eb' },
-  productChipText: { fontSize: 14, fontWeight: '500', color: '#374151' },
-  productChipTextSelected: { color: '#fff' },
-  fieldError: { fontSize: 12, color: '#ef4444', marginTop: -12, marginBottom: 12 },
+  container: { flex: 1, backgroundColor: colors.bg },
+  content: { padding: spacing[4], paddingBottom: spacing[10] },
+  sectionLabel: { fontSize: 11, fontWeight: '600', color: colors.textTertiary, marginBottom: spacing[2], textTransform: 'uppercase', letterSpacing: 0.5 },
+  noProducts: { fontSize: typography.sizes.caption, color: colors.danger, marginBottom: spacing[4] },
+  productScroller: { marginBottom: spacing[5] },
+  productScrollerContent: { gap: spacing[2] },
+  productChip: { paddingHorizontal: spacing[4], paddingVertical: 12, borderRadius: radii.pill, backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.border },
+  productChipSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
+  productChipText: { fontSize: typography.sizes.body, fontWeight: '500', color: colors.text },
+  productChipTextSelected: { color: colors.onPrimary },
+  fieldError: { fontSize: typography.sizes.caption, color: colors.danger, marginTop: -12, marginBottom: 12 },
   row: { flexDirection: 'row' },
-  unitLabel: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
+  unitLabel: { fontSize: 11, fontWeight: '600', color: colors.textTertiary, marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
   unitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 16 },
-  unitChip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, backgroundColor: '#fff', borderWidth: 1, borderColor: '#d1d5db' },
-  unitChipSelected: { backgroundColor: '#dbeafe', borderColor: '#2563eb' },
-  unitChipText: { fontSize: 13, fontWeight: '500', color: '#6b7280' },
-  unitChipTextSelected: { color: '#2563eb', fontWeight: '600' },
+  unitChip: { paddingHorizontal: 12, paddingVertical: 10, borderRadius: radii.md, backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.border },
+  unitChipSelected: { backgroundColor: colors.surfaceMuted, borderColor: colors.primary },
+  unitChipText: { fontSize: typography.sizes.body, fontWeight: '500', color: colors.textSecondary },
+  unitChipTextSelected: { color: colors.primary, fontWeight: '600' },
 });

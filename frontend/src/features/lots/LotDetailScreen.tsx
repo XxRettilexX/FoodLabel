@@ -8,18 +8,19 @@ import { useApiData } from '../../shared/hooks/useApiData';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { StatusBadge } from '../../shared/components/StatusBadge';
-import { SubmitButton } from '../../shared/components/SubmitButton';
+import { AppButton } from '../../shared/components/AppButton';
 import { Lot, InventoryMovement, MovementType } from '../../shared/types';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
+import { MovementIcons, ICON_SIZE, ICON_STROKE } from '../../core/theme/icons';
 
 type RouteProps = RouteProp<LotsStackParamList, 'LotDetail'>;
 type NavProps = NativeStackNavigationProp<LotsStackParamList, 'LotDetail'>;
 
-const MOVEMENT_TYPE_LABELS: Record<MovementType, { label: string; icon: string; color: string }> = {
-  IN: { label: 'Carico', icon: '📥', color: '#059669' },
-  OUT: { label: 'Scarico', icon: '📤', color: '#dc2626' },
-  ADJUST: { label: 'Rettifica', icon: '🔄', color: '#d97706' },
+const MOVEMENT_TYPE_LABELS: Record<MovementType, { label: string; Icon: any; color: string }> = {
+  IN: { label: 'Carico', Icon: MovementIcons.IN, color: colors.success },
+  OUT: { label: 'Scarico', Icon: MovementIcons.OUT, color: colors.danger },
+  ADJUST: { label: 'Rettifica', Icon: MovementIcons.ADJUST, color: colors.warning },
 };
 
 export function LotDetailScreen({ route, navigation }: { route: RouteProps; navigation: NavProps }) {
@@ -38,10 +39,10 @@ export function LotDetailScreen({ route, navigation }: { route: RouteProps; navi
 
   const formatDate = (dateStr: string | null): string => {
     if (!dateStr) return 'N/D';
-    return new Date(dateStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+    return new Date(dateStr).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
   const formatDateTime = (dateStr: string): string => {
-    return new Date(dateStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    return new Date(dateStr).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
   const handlePrint = async () => {
@@ -54,10 +55,10 @@ export function LotDetailScreen({ route, navigation }: { route: RouteProps; navi
       const printerIp = ipMatch ? ipMatch[1] : '127.0.0.1';
 
       // 1. Crea etichetta a sistema
-      const label = await labelsApi.create(lot.id);
+      const label = await lotsApi.createLabel(lot.id); // Assuming this is correct API mapping
       
       // 2. Invia alla print preview app
-      await labelsApi.printNetwork(label.id, printerIp);
+      await lotsApi.printLabelNetwork(label.id, printerIp);
       
       Alert.alert('Successo', 'Etichetta inviata all\'app di stampa!');
     } catch (err: any) {
@@ -87,19 +88,24 @@ export function LotDetailScreen({ route, navigation }: { route: RouteProps; navi
         {lot.created_by && <Text style={styles.createdBy}>Registrato da: {lot.created_by.name}</Text>}
       </SurfaceCard>
       <View style={styles.actionsRow}>
-        <SubmitButton label="Registra movimento" onPress={() => navigation.navigate('CreateMovement', { lotId: lot.id })} variant="primary" style={{ flex: 1, marginRight: 8 }} />
-        <SubmitButton label="Etichetta" onPress={handlePrint} variant="success" style={{ flex: 1, marginLeft: 8 }} />
+        <AppButton label="Registra movimento" onPress={() => navigation.navigate('CreateMovement', { lotId: lot.id })} variant="primary" style={{ flex: 1, marginRight: spacing[2] }} />
+        <AppButton label="Etichetta" onPress={handlePrint} variant="success" style={{ flex: 1, marginLeft: spacing[2] }} />
       </View>
       <SurfaceCard style={styles.section}>
         <Text style={styles.sectionTitle}>Storico Movimenti ({lot.movements?.length || 0})</Text>
         {lot.movements && lot.movements.length > 0 ? lot.movements.map((m: InventoryMovement) => {
           const config = MOVEMENT_TYPE_LABELS[m.type];
+          const Icon = config.Icon;
           return (
             <View key={m.id} style={styles.movementCard}>
               <View style={styles.movementHeader}>
-                <View style={{ flex: 1 }}><Text style={[styles.movementType, { color: config.color }]}>{config.icon} {config.label}</Text><Text style={styles.movementDate}>{formatDateTime(m.created_at)}</Text></View>
+                <View style={styles.movementTitleRow}>
+                  <Icon size={ICON_SIZE.inline} color={config.color} strokeWidth={ICON_STROKE} />
+                  <Text style={[styles.movementType, { color: config.color }]}>{config.label}</Text>
+                </View>
                 <Text style={[styles.movementQty, { color: config.color }]}>{m.type === 'OUT' ? '-' : m.type === 'IN' ? '+' : ''}{m.quantity} {lot.unit}</Text>
               </View>
+              <Text style={styles.movementDate}>{formatDateTime(m.created_at)}</Text>
               {m.notes && <Text style={styles.movementNotes}>{m.notes}</Text>}
               {m.user && <Text style={styles.movementUser}>di {m.user.name}</Text>}
             </View>
@@ -112,31 +118,32 @@ export function LotDetailScreen({ route, navigation }: { route: RouteProps; navi
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 20, paddingBottom: 40 },
-  header: { padding: 18, marginBottom: 16 },
-  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  batchNumber: { fontSize: 22, fontWeight: '800', color: colors.text },
-  productName: { fontSize: 16, color: colors.textSecondary, fontWeight: '600' },
-  supplierName: { fontSize: 13, color: colors.textTertiary, marginTop: 4 },
-  quantityRow: { flexDirection: 'row', gap: 12, marginBottom: 16 },
-  quantityCard: { flex: 1, alignItems: 'center' },
+  content: { padding: spacing[4], paddingBottom: spacing[10] },
+  header: { padding: spacing[4], marginBottom: spacing[4] },
+  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing[2] },
+  batchNumber: { fontSize: typography.sizes.title, fontWeight: '800', color: colors.text, fontFamily: 'monospace' },
+  productName: { fontSize: typography.sizes.bodyMedium, color: colors.textSecondary, fontWeight: '600' },
+  supplierName: { fontSize: typography.sizes.caption, color: colors.textTertiary, marginTop: spacing[1] },
+  quantityRow: { flexDirection: 'row', gap: spacing[3], marginBottom: spacing[4] },
+  quantityCard: { flex: 1, alignItems: 'center', padding: spacing[4] },
   quantityCardHighlight: { backgroundColor: colors.primary, borderColor: colors.primary },
-  qtyLabel: { fontSize: 12, color: colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
-  qtyValue: { fontSize: 22, fontWeight: '800', color: colors.text },
-  section: { marginBottom: 16 },
-  dateRow: { flexDirection: 'row', gap: 20 },
+  qtyLabel: { fontSize: 11, color: colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: spacing[1] },
+  qtyValue: { fontSize: typography.sizes.title, fontWeight: '800', color: colors.text, fontFamily: 'monospace' },
+  section: { marginBottom: spacing[4], padding: spacing[4] },
+  dateRow: { flexDirection: 'row', gap: spacing[5] },
   dateItem: { flex: 1 },
   dateLabel: { fontSize: 11, color: colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5 },
-  dateValue: { fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginTop: 4 },
-  createdBy: { fontSize: 12, color: colors.textTertiary, marginTop: 12 },
-  actionsRow: { flexDirection: 'row', marginBottom: 16 },
-  sectionTitle: { fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 12 },
-  movementCard: { backgroundColor: colors.surfaceMuted, padding: 12, borderRadius: 10, marginBottom: 8, borderWidth: 1, borderColor: colors.border },
-  movementHeader: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  movementType: { fontSize: 14, fontWeight: '600' },
-  movementDate: { fontSize: 11, color: colors.textTertiary, marginTop: 1 },
-  movementQty: { fontSize: 16, fontWeight: '700' },
-  movementNotes: { fontSize: 12, color: colors.textSecondary, marginTop: 6, marginLeft: 28, fontStyle: 'italic' },
-  movementUser: { fontSize: 11, color: colors.textTertiary, marginTop: 4, marginLeft: 28 },
-  noMovements: { fontSize: 13, color: colors.textTertiary, textAlign: 'center', paddingVertical: 12 },
+  dateValue: { fontSize: typography.sizes.label, fontWeight: '700', color: colors.textSecondary, marginTop: spacing[1], fontFamily: 'monospace' },
+  createdBy: { fontSize: typography.sizes.caption, color: colors.textTertiary, marginTop: spacing[3] },
+  actionsRow: { flexDirection: 'row', marginBottom: spacing[4] },
+  sectionTitle: { fontSize: typography.sizes.bodyMedium, fontWeight: '700', color: colors.text, marginBottom: spacing[3] },
+  movementCard: { backgroundColor: colors.bg, padding: spacing[3], borderRadius: radii.sm, marginBottom: spacing[2], borderWidth: 1, borderColor: colors.border },
+  movementHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  movementTitleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing[1] },
+  movementType: { fontSize: typography.sizes.label, fontWeight: '600' },
+  movementDate: { fontSize: 11, color: colors.textTertiary, marginTop: spacing[1] },
+  movementQty: { fontSize: typography.sizes.bodyMedium, fontWeight: '700', fontFamily: 'monospace' },
+  movementNotes: { fontSize: typography.sizes.caption, color: colors.textSecondary, marginTop: spacing[1], fontStyle: 'italic' },
+  movementUser: { fontSize: 11, color: colors.textTertiary, marginTop: spacing[1] },
+  noMovements: { fontSize: typography.sizes.caption, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing[3] },
 });

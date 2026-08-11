@@ -10,7 +10,7 @@ import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
 import { AppButton } from '../../shared/components/AppButton';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 type RouteProps = RouteProp<PreparationStackParamList, 'RecipeDetail'>;
 type NavProps = NativeStackNavigationProp<PreparationStackParamList, 'RecipeDetail'>;
@@ -71,14 +71,14 @@ export function RecipeDetailScreen({ route, navigation }: { route: RouteProps; n
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 20, paddingBottom: 30, gap: 12 },
-  name: { fontSize: 24, fontWeight: '800', color: colors.text },
-  meta: { fontSize: 13, color: colors.textSecondary, marginTop: 4 },
-  description: { fontSize: 14, color: colors.textSecondary, marginTop: 8, lineHeight: 20 },
+  content: { padding: spacing[5], paddingBottom: spacing[8], gap: spacing[3] },
+  name: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  meta: { fontSize: typography.sizes.body, color: colors.textSecondary, marginTop: spacing[1] },
+  description: { fontSize: typography.sizes.body, color: colors.textSecondary, marginTop: spacing[2], lineHeight: 20 },
   row: { flexDirection: 'row' },
-  sectionTitle: { fontSize: 13, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 4 },
-  itemCard: { marginBottom: 8 },
-  itemName: { fontSize: 15, color: colors.text, fontWeight: '700' },
-  itemMeta: { fontSize: 13, color: colors.textSecondary, marginTop: 4 },
-  itemNotes: { fontSize: 12, color: colors.textTertiary, marginTop: 4 },
+  sectionTitle: { fontSize: 11, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: spacing[1] },
+  itemCard: { marginBottom: spacing[2], padding: spacing[4] },
+  itemName: { fontSize: typography.sizes.bodyMedium, color: colors.text, fontWeight: '700' },
+  itemMeta: { fontSize: typography.sizes.body, color: colors.textSecondary, marginTop: spacing[1] },
+  itemNotes: { fontSize: typography.sizes.caption, color: colors.textTertiary, marginTop: spacing[1] },
 });

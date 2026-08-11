@@ -8,7 +8,7 @@ import { Product } from '../../shared/types';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 type RouteProps = RouteProp<ProductsStackParamList, 'ProductDetail'>;
 
@@ -29,11 +29,17 @@ export function ProductDetailScreen({ route }: { route: RouteProps }) {
     <View style={styles.container}>
       <SurfaceCard style={styles.card}>
         <Text style={styles.name}>{product.name}</Text>
-        <Text style={styles.line}>Barcode: {product.barcode || 'N/D'}</Text>
-        <Text style={styles.line}>SKU: {product.sku || 'N/D'}</Text>
-        <Text style={styles.line}>Categoria: {product.category || 'N/D'}</Text>
-        <Text style={styles.line}>Unita base: {product.base_unit}</Text>
-        <Text style={styles.line}>Stato: {product.is_active ? 'Attivo' : 'Inattivo'}</Text>
+        <View style={styles.badgeRow}>
+          <View style={[styles.statusPill, product.is_active ? styles.statusActive : styles.statusInactive]}>
+            <Text style={[styles.statusText, product.is_active ? styles.statusTextActive : styles.statusTextInactive]}>
+              {product.is_active ? 'ATTIVO' : 'INATTIVO'}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.line}><Text style={styles.lineLabel}>Barcode:</Text> {product.barcode || 'N/D'}</Text>
+        <Text style={styles.line}><Text style={styles.lineLabel}>SKU:</Text> {product.sku || 'N/D'}</Text>
+        <Text style={styles.line}><Text style={styles.lineLabel}>Categoria:</Text> {product.category || 'N/D'}</Text>
+        <Text style={styles.line}><Text style={styles.lineLabel}>Unita base:</Text> {product.base_unit}</Text>
         {product.notes ? <Text style={styles.notes}>{product.notes}</Text> : null}
       </SurfaceCard>
     </View>
@@ -41,9 +47,17 @@ export function ProductDetailScreen({ route }: { route: RouteProps }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg, padding: 20 },
-  card: { gap: 8 },
-  name: { fontSize: 24, fontWeight: '800', color: colors.text, marginBottom: 4 },
-  line: { fontSize: 14, color: colors.textSecondary },
-  notes: { marginTop: 6, fontSize: 13, lineHeight: 18, color: colors.textSecondary, backgroundColor: colors.surfaceMuted, padding: 10, borderRadius: 10 },
+  container: { flex: 1, backgroundColor: colors.bg, padding: spacing[5] },
+  card: { gap: spacing[2], padding: spacing[5] },
+  name: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text, marginBottom: spacing[1] },
+  badgeRow: { flexDirection: 'row', marginBottom: spacing[3] },
+  statusPill: { paddingHorizontal: spacing[3], paddingVertical: 6, borderRadius: radii.pill },
+  statusActive: { backgroundColor: '#dcfce7' },
+  statusInactive: { backgroundColor: '#fee2e2' },
+  statusText: { fontSize: 11, fontWeight: '700' },
+  statusTextActive: { color: colors.success },
+  statusTextInactive: { color: colors.danger },
+  line: { fontSize: typography.sizes.body, color: colors.textSecondary },
+  lineLabel: { color: colors.textTertiary, fontWeight: '600' },
+  notes: { marginTop: spacing[3], fontSize: typography.sizes.body, lineHeight: 20, color: colors.textSecondary, backgroundColor: colors.surfaceMuted, padding: spacing[3], borderRadius: radii.md },
 });

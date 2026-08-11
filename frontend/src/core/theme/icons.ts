@@ -1,15 +1,16 @@
 /**
  * Centralized Lucide icon mapping for the FoodLabel app.
  *
- * All icons use outline style with strokeWidth 1.8 for a premium,
+ * All icons use outline style with strokeWidth 1.5 for a premium,
  * Swiss/Apple-like feel. Never use filled icons or colored backgrounds.
  *
  * Size guide:
  *   navbar      → 24
  *   header      → 20
  *   list items  → 18
- *   empty state → 40-48
+ *   empty state → 48
  *   badge/inline→ 14-16
+ *   status      → 18
  */
 import {
   LayoutDashboard,
@@ -30,7 +31,6 @@ import {
   CheckCircle2,
   PackageOpen,
   ClipboardList,
-  Boxes,
   ShieldAlert,
   LogOut,
   CookingPot,
@@ -38,21 +38,34 @@ import {
   Info,
   Trash2,
   ChevronRight,
+  ChevronLeft,
   X,
-  Filter,
+  XCircle,
+  Clock,
+  CalendarClock,
+  Warehouse,
+  Printer,
+  Thermometer,
+  WifiOff,
+  FileText,
+  SlidersHorizontal,
+  Pencil,
+  Settings,
+  Camera,
 } from 'lucide-react-native';
 
 /** Default stroke width for all icons across the app. */
-export const ICON_STROKE = 1.8;
+export const ICON_STROKE = 1.5;
 
 /** Icon sizes by context. */
 export const ICON_SIZE = {
   navbar: 24,
   header: 20,
   list: 18,
-  emptyState: 44,
+  emptyState: 48,
   badge: 14,
   inline: 16,
+  status: 18,
 } as const;
 
 // ── Tab bar icons ──────────────────────────────────────────
@@ -72,10 +85,15 @@ export const ActionIcons = {
   Scan: ScanLine,
   Delete: Trash2,
   Logout: LogOut,
-  Filter,
+  Filter: SlidersHorizontal,
   Close: X,
   Next: ChevronRight,
+  Back: ChevronLeft,
   Info,
+  Edit: Pencil,
+  Print: Printer,
+  Settings,
+  Camera,
 } as const;
 
 // ── Domain icons ───────────────────────────────────────────
@@ -89,7 +107,10 @@ export const DomainIcons = {
   Barcode,
   Staff: Users,
   Alert: ShieldAlert,
-  Inventory: Boxes,
+  Inventory: Warehouse,
+  Thermometer,
+  Calendar: CalendarClock,
+  Invoice: FileText,
 } as const;
 
 // ── Movement type icons ────────────────────────────────────
@@ -104,4 +125,13 @@ export const StateIcons = {
   Empty: PackageOpen,
   Error: AlertTriangle,
   Success: CheckCircle2,
+  Offline: WifiOff,
+} as const;
+
+// ── Status icons (for triple-encoding) ─────────────────────
+export const StatusIcons = {
+  ok: CheckCircle2,
+  warning: AlertTriangle,
+  expired: XCircle,
+  pending: Clock,
 } as const;

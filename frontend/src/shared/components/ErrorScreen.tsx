@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { AppButton } from './AppButton';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography } from '../../core/theme/tokens';
 import { StateIcons, ICON_STROKE, ICON_SIZE } from '../../core/theme/icons';
 
 interface ErrorScreenProps {
@@ -32,21 +32,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.bg,
-    padding: 30,
+    padding: spacing[8],
   },
   title: {
-    fontSize: 18,
+    fontSize: typography.sizes.heading,
     fontWeight: '700',
     color: colors.text,
-    marginTop: 12,
-    marginBottom: 8,
+    marginTop: spacing[3],
+    marginBottom: spacing[2],
   },
   message: {
-    fontSize: 14,
+    fontSize: typography.sizes.body,
     color: colors.textTertiary,
     textAlign: 'center',
-    marginBottom: 20,
-    lineHeight: 20,
+    marginBottom: spacing[5],
+    lineHeight: typography.lineHeights.body,
   },
   button: {
     minWidth: 140,

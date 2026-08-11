@@ -1,7 +1,27 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 
-const baseURL = process.env.EXPO_PUBLIC_API_URL || 'http://10.0.2.2:8000/api/v1';
+function getApiBaseUrl(): string {
+  // 1. Explicit env variable
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.EXPO_PUBLIC_API_URL;
+  }
+
+  // 2. Dynamically extract the IP from Expo Metro bundler (useful when switching Wi-Fi/Hotspots)
+  const hostUri = Constants.expoConfig?.hostUri || (Constants as any).manifest2?.extra?.expoGo?.debuggerHost;
+  if (hostUri) {
+    const ip = hostUri.split(':')[0];
+    if (ip) {
+      return `http://${ip}:8000/api/v1`;
+    }
+  }
+
+  // 3. Default fallback for Android Emulator
+  return 'http://10.0.2.2:8000/api/v1';
+}
+
+const baseURL = getApiBaseUrl();
 const isInsecureHttp = /^http:\/\//i.test(baseURL);
 
 let onUnauthorized: (() => void | Promise<void>) | null = null;

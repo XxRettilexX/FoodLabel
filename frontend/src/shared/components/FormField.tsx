@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, TextInput, View, StyleSheet } from 'react-native';
+import { colors, radii, spacing, typography } from '../../core/theme/tokens';
 
 interface FormFieldProps {
   label: string;
@@ -20,6 +21,8 @@ export function FormField({
   error,
   multiline = false,
 }: FormFieldProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View style={styles.wrapper}>
       <Text style={styles.label}>{label}</Text>
@@ -27,15 +30,18 @@ export function FormField({
         style={[
           styles.input,
           multiline && styles.multiline,
+          isFocused && styles.inputFocused,
           error ? styles.inputError : null,
         ]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#9ca3af"
+        placeholderTextColor={colors.textTertiary}
         keyboardType={keyboardType}
         multiline={multiline}
         numberOfLines={multiline ? 3 : 1}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
@@ -44,36 +50,40 @@ export function FormField({
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 16,
+    marginBottom: spacing[4],
   },
   label: {
-    fontSize: 13,
+    fontSize: typography.sizes.label,
     fontWeight: '600',
-    color: '#374151',
-    marginBottom: 6,
+    color: colors.textSecondary,
+    marginBottom: spacing[1],
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   input: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    fontSize: 15,
-    color: '#1f2937',
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing[4],
+    paddingVertical: 14,
+    borderRadius: radii.sm,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    fontSize: typography.sizes.body,
+    color: colors.text,
+    minHeight: 52,
+  },
+  inputFocused: {
+    borderColor: colors.primary,
   },
   multiline: {
     minHeight: 80,
     textAlignVertical: 'top',
   },
   inputError: {
-    borderColor: '#ef4444',
+    borderColor: colors.danger,
   },
   error: {
-    fontSize: 12,
-    color: '#ef4444',
-    marginTop: 4,
+    fontSize: typography.sizes.label,
+    color: colors.danger,
+    marginTop: spacing[1],
   },
 });

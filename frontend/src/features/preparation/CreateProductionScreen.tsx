@@ -11,8 +11,8 @@ import { useApiSubmit } from '../../shared/hooks/useApiSubmit';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { FormField } from '../../shared/components/FormField';
-import { SubmitButton } from '../../shared/components/SubmitButton';
-import { colors } from '../../core/theme/tokens';
+import { AppButton } from '../../shared/components/AppButton';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 type RouteProps = RouteProp<PreparationStackParamList, 'CreateProduction'>;
 type NavProps = NativeStackNavigationProp<PreparationStackParamList, 'CreateProduction'>;
@@ -101,7 +101,7 @@ export function CreateProductionScreen({ route, navigation }: { route: RouteProp
       <FormField label="Prodotta il * (YYYY-MM-DD HH:mm)" value={producedAt} onChangeText={setProducedAt} error={fieldErrors.produced_at?.[0]} />
 
       <Text style={styles.section}>Ricetta (opzionale)</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, marginBottom: 14 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing[2], marginBottom: spacing[4] }}>
         <TouchableOpacity onPress={() => setRecipeId(null)} style={[styles.recipeChip, recipeId === null && styles.recipeChipActive]}><Text style={[styles.recipeText, recipeId === null && styles.recipeTextActive]}>Nessuna</Text></TouchableOpacity>
         {recipes.map((r) => (
           <TouchableOpacity key={r.id} onPress={() => setRecipeId(r.id)} style={[styles.recipeChip, recipeId === r.id && styles.recipeChipActive]}><Text style={[styles.recipeText, recipeId === r.id && styles.recipeTextActive]}>{r.name}</Text></TouchableOpacity>
@@ -110,12 +110,12 @@ export function CreateProductionScreen({ route, navigation }: { route: RouteProp
 
       <View style={styles.row}>
         <View style={{ flex: 1 }}><FormField label="Output quantita" value={outputQuantity} onChangeText={setOutputQuantity} keyboardType="numeric" /></View>
-        <View style={{ width: 96, marginLeft: 8 }}><FormField label="Unita" value={outputUnit} onChangeText={(v) => setOutputUnit(v as MeasureUnit)} /></View>
+        <View style={{ width: 96, marginLeft: spacing[2] }}><FormField label="Unita" value={outputUnit} onChangeText={(v) => setOutputUnit(v as MeasureUnit)} /></View>
       </View>
       <FormField label="Note" value={notes} onChangeText={setNotes} multiline />
 
       <Text style={styles.section}>Selezione lotti input *</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, marginBottom: 12 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing[2], marginBottom: spacing[3] }}>
         {lots.map((lot) => (
           <TouchableOpacity key={lot.id} onPress={() => addLotInput(lot)} style={styles.lotChip}>
             <Text style={styles.lotChipText}>{lot.batch_number}</Text>
@@ -132,7 +132,7 @@ export function CreateProductionScreen({ route, navigation }: { route: RouteProp
             <Text style={styles.inputMeta}>{lot?.product?.name || 'Prodotto'} • giacenza {lot?.current_quantity ?? '-'} {lot?.unit}</Text>
             <View style={styles.row}>
               <View style={{ flex: 1 }}><FormField label="Quantita usata" value={input.quantity_used} onChangeText={(v) => updateInput(input.lot_id, { quantity_used: v })} keyboardType="numeric" /></View>
-              <View style={{ width: 96, marginLeft: 8 }}><FormField label="Unita" value={input.unit} onChangeText={(v) => updateInput(input.lot_id, { unit: v as MeasureUnit })} /></View>
+              <View style={{ width: 96, marginLeft: spacing[2] }}><FormField label="Unita" value={input.unit} onChangeText={(v) => updateInput(input.lot_id, { unit: v as MeasureUnit })} /></View>
             </View>
             <FormField label="Note input" value={input.notes} onChangeText={(v) => updateInput(input.lot_id, { notes: v })} />
             <TouchableOpacity onPress={() => removeInput(input.lot_id)}><Text style={styles.remove}>Rimuovi lotto</Text></TouchableOpacity>
@@ -141,28 +141,28 @@ export function CreateProductionScreen({ route, navigation }: { route: RouteProp
       })}
       {fieldErrors.inputs?.[0] ? <Text style={styles.error}>{fieldErrors.inputs[0]}</Text> : null}
 
-      <SubmitButton label="Registra produzione" onPress={handleSave} loading={submitting} disabled={!name.trim() || hasInvalidInputs} />
+      <AppButton label="Registra produzione" onPress={handleSave} loading={submitting} disabled={!name.trim() || hasInvalidInputs} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 20, paddingBottom: 30 },
-  title: { fontSize: 28, fontWeight: '800', color: colors.text },
-  subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4, marginBottom: 14 },
-  section: { fontSize: 12, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 },
+  content: { padding: spacing[5], paddingBottom: spacing[8] },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  subtitle: { fontSize: typography.sizes.bodyMedium, color: colors.textSecondary, marginTop: spacing[1], marginBottom: spacing[4] },
+  section: { fontSize: 11, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: spacing[2] },
   row: { flexDirection: 'row' },
-  recipeChip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 9, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
-  recipeChipActive: { borderColor: colors.primary, backgroundColor: '#dbeafe' },
-  recipeText: { color: colors.textSecondary, fontWeight: '600', fontSize: 12 },
+  recipeChip: { paddingHorizontal: spacing[3], paddingVertical: spacing[2], borderRadius: radii.md, borderWidth: 1.5, borderColor: colors.border, backgroundColor: colors.surface },
+  recipeChipActive: { borderColor: colors.primary, backgroundColor: colors.surfaceMuted },
+  recipeText: { color: colors.textSecondary, fontWeight: '600', fontSize: typography.sizes.caption },
   recipeTextActive: { color: colors.primary },
-  lotChip: { paddingHorizontal: 10, paddingVertical: 9, borderRadius: 10, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, minWidth: 130 },
-  lotChipText: { color: colors.text, fontWeight: '700', fontSize: 12 },
+  lotChip: { paddingHorizontal: spacing[3], paddingVertical: spacing[2], borderRadius: radii.md, borderWidth: 1.5, borderColor: colors.border, backgroundColor: colors.surface, minWidth: 130 },
+  lotChipText: { color: colors.text, fontWeight: '700', fontSize: typography.sizes.caption },
   lotChipSub: { color: colors.textTertiary, fontSize: 11, marginTop: 2 },
-  inputCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 12, padding: 12, marginBottom: 12 },
-  inputTitle: { fontSize: 14, fontWeight: '800', color: colors.text },
-  inputMeta: { fontSize: 12, color: colors.textTertiary, marginTop: 2, marginBottom: 8 },
-  remove: { color: '#b91c1c', fontWeight: '600' },
-  error: { color: '#b91c1c', marginBottom: 8, fontSize: 12 },
+  inputCard: { backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.border, borderRadius: radii.md, padding: spacing[3], marginBottom: spacing[3] },
+  inputTitle: { fontSize: typography.sizes.bodyMedium, fontWeight: '800', color: colors.text },
+  inputMeta: { fontSize: typography.sizes.caption, color: colors.textTertiary, marginTop: 2, marginBottom: spacing[2] },
+  remove: { color: colors.danger, fontWeight: '600', fontSize: typography.sizes.body },
+  error: { color: colors.danger, marginBottom: spacing[2], fontSize: typography.sizes.caption },
 });

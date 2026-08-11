@@ -10,7 +10,8 @@ import { EmptyState } from '../../shared/components/EmptyState';
 import { StatusBadge } from '../../shared/components/StatusBadge';
 import { Lot } from '../../shared/types';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
-import { colors } from '../../core/theme/tokens';
+import { colors, radii, spacing, typography } from '../../core/theme/tokens';
+import { ActionIcons, ICON_SIZE, ICON_STROKE } from '../../core/theme/icons';
 
 type NavigationProp = NativeStackNavigationProp<LotsStackParamList, 'LotsList'>;
 
@@ -72,9 +73,11 @@ export function LotsListScreen({ navigation }: { navigation: NavigationProp }) {
 
       <SurfaceCard style={styles.bottomActions}>
         <TouchableOpacity style={[styles.actionBtn, styles.actionSecondary]} onPress={() => navigation.navigate('ScanLotLabel')} activeOpacity={0.85}>
+          <ActionIcons.Scan size={ICON_SIZE.inline} color={colors.text} strokeWidth={ICON_STROKE} />
           <Text style={[styles.actionText, styles.actionTextSecondary]}>Scansiona</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.navigate('CreateLot')} activeOpacity={0.85}>
+          <ActionIcons.Add size={ICON_SIZE.inline} color={colors.onPrimary} strokeWidth={ICON_STROKE} />
           <Text style={styles.actionText}>Nuovo lotto</Text>
         </TouchableOpacity>
       </SurfaceCard>
@@ -84,21 +87,21 @@ export function LotsListScreen({ navigation }: { navigation: NavigationProp }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 8 },
-  title: { fontSize: 28, fontWeight: '800', color: colors.text },
-  subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4 },
-  listContent: { paddingHorizontal: 20, paddingBottom: 110, paddingTop: 4 },
-  cardWrap: { marginBottom: 12 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  batch: { fontSize: 17, fontWeight: '800', color: colors.text },
-  product: { fontSize: 14, color: colors.textSecondary, marginBottom: 12 },
-  cardFooter: { flexDirection: 'row', gap: 24 },
+  header: { paddingHorizontal: spacing[5], paddingTop: spacing[4], paddingBottom: spacing[2] },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  subtitle: { fontSize: typography.sizes.label, color: colors.textSecondary, marginTop: spacing[1] },
+  listContent: { paddingHorizontal: spacing[5], paddingBottom: 110, paddingTop: spacing[1] },
+  cardWrap: { marginBottom: spacing[3] },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing[1] },
+  batch: { fontSize: typography.sizes.heading, fontWeight: '800', color: colors.text },
+  product: { fontSize: typography.sizes.body, color: colors.textSecondary, marginBottom: spacing[3] },
+  cardFooter: { flexDirection: 'row', gap: spacing[6] },
   infoBlock: {},
   infoLabel: { fontSize: 11, color: colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5 },
-  infoValue: { fontSize: 14, fontWeight: '700', color: colors.textSecondary, marginTop: 2 },
-  bottomActions: { position: 'absolute', left: 20, right: 20, bottom: 14, flexDirection: 'row', gap: 10, padding: 10 },
-  actionBtn: { flex: 1, borderRadius: 11, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', minHeight: 44 },
-  actionSecondary: { backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.border },
-  actionText: { color: '#fff', fontWeight: '700', fontSize: 14 },
+  infoValue: { fontSize: typography.sizes.label, fontWeight: '700', color: colors.textSecondary, marginTop: 2 },
+  bottomActions: { position: 'absolute', left: spacing[5], right: spacing[5], bottom: 14, flexDirection: 'row', gap: spacing[2], padding: spacing[2] },
+  actionBtn: { flex: 1, borderRadius: radii.md, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', minHeight: 56, flexDirection: 'row', gap: spacing[2] },
+  actionSecondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  actionText: { color: colors.onPrimary, fontWeight: '700', fontSize: typography.sizes.bodyMedium },
   actionTextSecondary: { color: colors.text },
 });

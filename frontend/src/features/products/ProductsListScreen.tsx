@@ -8,7 +8,7 @@ import { EmptyState } from '../../shared/components/EmptyState';
 import { Product } from '../../shared/types';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
 import { AppButton } from '../../shared/components/AppButton';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProductsStackParamList } from './ProductsNavigator';
 
@@ -100,21 +100,21 @@ export function ProductsListScreen({ navigation }: { navigation: NavProps }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  title: { fontSize: 28, fontWeight: '800', color: colors.text, paddingHorizontal: 20, paddingTop: 16 },
-  subtitle: { paddingHorizontal: 20, fontSize: 14, color: colors.textSecondary, marginTop: 4, marginBottom: 12 },
-  search: { marginHorizontal: 20, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, color: colors.text, fontSize: 14 },
-  actionsRow: { flexDirection: 'row', gap: 10, marginHorizontal: 20, marginTop: 10, marginBottom: 12 },
-  listContent: { paddingHorizontal: 20, paddingBottom: 20 },
-  card: { marginBottom: 10 },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  name: { fontSize: 16, fontWeight: '800', color: colors.text, flex: 1 },
-  statusPill: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, marginLeft: 8 },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text, paddingHorizontal: spacing[5], paddingTop: spacing[4] },
+  subtitle: { paddingHorizontal: spacing[5], fontSize: typography.sizes.label, color: colors.textSecondary, marginTop: spacing[1], marginBottom: spacing[3] },
+  search: { marginHorizontal: spacing[5], borderWidth: 1.5, borderColor: colors.border, backgroundColor: colors.surface, borderRadius: radii.md, paddingHorizontal: spacing[4], paddingVertical: 14, color: colors.text, fontSize: typography.sizes.body, minHeight: 52 },
+  actionsRow: { flexDirection: 'row', gap: spacing[2], marginHorizontal: spacing[5], marginTop: spacing[2], marginBottom: spacing[3] },
+  listContent: { paddingHorizontal: spacing[5], paddingBottom: spacing[5] },
+  card: { marginBottom: spacing[2] },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing[1] },
+  name: { fontSize: typography.sizes.heading, fontWeight: '800', color: colors.text, flex: 1 },
+  statusPill: { paddingHorizontal: spacing[2], paddingVertical: 4, borderRadius: radii.pill, marginLeft: spacing[2] },
   statusActive: { backgroundColor: '#dcfce7' },
   statusInactive: { backgroundColor: '#fee2e2' },
   statusText: { fontSize: 10, fontWeight: '700' },
-  statusTextActive: { color: '#166534' },
-  statusTextInactive: { color: '#991b1b' },
-  meta: { fontSize: 12, color: colors.textTertiary, marginBottom: 4 },
-  barcode: { backgroundColor: '#f3f4f6', paddingHorizontal: 8, paddingVertical: 6, borderRadius: 8, color: colors.text, fontSize: 13, fontWeight: '600', marginBottom: 8 },
-  description: { fontSize: 13, color: colors.textSecondary, marginBottom: 8, lineHeight: 18 },
+  statusTextActive: { color: colors.success },
+  statusTextInactive: { color: colors.danger },
+  meta: { fontSize: typography.sizes.caption, color: colors.textTertiary, marginBottom: spacing[1] },
+  barcode: { backgroundColor: colors.surfaceMuted, paddingHorizontal: spacing[2], paddingVertical: spacing[1], borderRadius: radii.sm, color: colors.text, fontSize: typography.sizes.body, fontWeight: '600', marginBottom: spacing[2], fontFamily: 'monospace' },
+  description: { fontSize: typography.sizes.caption, color: colors.textSecondary, marginBottom: spacing[2], lineHeight: 18 },
 });

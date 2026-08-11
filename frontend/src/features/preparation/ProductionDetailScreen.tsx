@@ -10,7 +10,7 @@ import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
 import { AppButton } from '../../shared/components/AppButton';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 type RouteProps = RouteProp<PreparationStackParamList, 'ProductionDetail'>;
 type NavProps = NativeStackNavigationProp<PreparationStackParamList, 'ProductionDetail'>;
@@ -37,7 +37,7 @@ export function ProductionDetailScreen({ route, navigation }: { route: RouteProp
         ) : null}
       </SurfaceCard>
 
-      <AppButton label="Vista origine ingredienti" onPress={() => navigation.navigate('IngredientOrigin', { productionId: production.id })} style={{ marginTop: 12 }} />
+      <AppButton label="Vista origine ingredienti" onPress={() => navigation.navigate('IngredientOrigin', { productionId: production.id })} style={{ marginTop: spacing[3] }} />
 
       <Text style={styles.section}>Input registrati</Text>
       {production.inputs && production.inputs.length > 0 ? (
@@ -56,11 +56,11 @@ export function ProductionDetailScreen({ route, navigation }: { route: RouteProp
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 20, gap: 12, paddingBottom: 30 },
-  name: { fontSize: 24, fontWeight: '800', color: colors.text },
-  meta: { marginTop: 4, color: colors.textSecondary, fontSize: 13 },
-  section: { fontSize: 12, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 4 },
-  inputCard: { marginBottom: 8 },
-  inputName: { fontSize: 15, fontWeight: '700', color: colors.text },
-  inputMeta: { fontSize: 12, color: colors.textSecondary, marginTop: 4 },
+  content: { padding: spacing[5], gap: spacing[3], paddingBottom: spacing[8] },
+  name: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  meta: { marginTop: spacing[1], color: colors.textSecondary, fontSize: typography.sizes.body },
+  section: { fontSize: 11, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginTop: spacing[1] },
+  inputCard: { marginBottom: spacing[2], padding: spacing[4] },
+  inputName: { fontSize: typography.sizes.bodyMedium, fontWeight: '700', color: colors.text },
+  inputMeta: { fontSize: typography.sizes.body, color: colors.textSecondary, marginTop: spacing[1] },
 });

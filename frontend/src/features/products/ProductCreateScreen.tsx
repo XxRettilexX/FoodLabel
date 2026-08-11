@@ -1,13 +1,14 @@
 import React, { useMemo, useState, useRef } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FormField } from '../../shared/components/FormField';
-import { SubmitButton } from '../../shared/components/SubmitButton';
+import { AppButton } from '../../shared/components/AppButton';
 import { useApiSubmit } from '../../shared/hooks/useApiSubmit';
 import { productsApi } from './api';
 import { CreateProductPayload } from '../../shared/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ProductsStackParamList } from './ProductsNavigator';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
+import { ActionIcons, ICON_SIZE, ICON_STROKE } from '../../core/theme/icons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 
@@ -66,10 +67,10 @@ export function ProductCreateScreen({ navigation }: { navigation: NavProps }) {
     if (!permission) return <LoadingScreen message="Verifica permessi..." />;
     if (!permission.granted) {
       return (
-        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
-          <Text style={{ textAlign: 'center', marginBottom: 20 }}>Permesso fotocamera necessario per scansionare.</Text>
-          <SubmitButton label="Richiedi Permesso" onPress={requestPermission} />
-          <TouchableOpacity style={{ marginTop: 20 }} onPress={() => setIsScanning(false)}>
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: spacing[5] }]}>
+          <Text style={{ textAlign: 'center', marginBottom: spacing[5], color: colors.text }}>Permesso fotocamera necessario per scansionare.</Text>
+          <AppButton label="Richiedi Permesso" onPress={requestPermission} />
+          <TouchableOpacity style={{ marginTop: spacing[5] }} onPress={() => setIsScanning(false)}>
             <Text style={{ color: colors.primary }}>Torna indietro</Text>
           </TouchableOpacity>
         </View>
@@ -104,10 +105,11 @@ export function ProductCreateScreen({ navigation }: { navigation: NavProps }) {
 
       <FormField label="Nome prodotto *" value={name} onChangeText={setName} placeholder="es. Passata di pomodoro 5kg" error={fieldErrors.name?.[0]} />
       
-      <View style={{ marginBottom: 16 }}>
+      <View style={{ marginBottom: spacing[4] }}>
         <FormField label="Barcode" value={barcode} onChangeText={setBarcode} placeholder="EAN/UPC" error={fieldErrors.barcode?.[0]} />
         <TouchableOpacity style={styles.scanBtn} onPress={handleScanPress}>
-          <Text style={styles.scanBtnText}>📷 Scansiona con fotocamera</Text>
+          <ActionIcons.Camera size={ICON_SIZE.inline} color={colors.primary} strokeWidth={ICON_STROKE} />
+          <Text style={styles.scanBtnText}>Scansiona con fotocamera</Text>
         </TouchableOpacity>
       </View>
 
@@ -136,32 +138,32 @@ export function ProductCreateScreen({ navigation }: { navigation: NavProps }) {
 
       <FormField label="Note" value={notes} onChangeText={setNotes} placeholder="Note operative" multiline error={fieldErrors.notes?.[0]} />
 
-      <SubmitButton label="Salva prodotto" onPress={handleSubmit} loading={submitting} disabled={!name.trim()} style={{ marginTop: 8 }} />
+      <AppButton label="Salva prodotto" onPress={handleSubmit} loading={submitting} disabled={!name.trim()} style={{ marginTop: spacing[2] }} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 20, paddingBottom: 40 },
-  title: { fontSize: 28, fontWeight: '800', color: colors.text },
-  subtitle: { fontSize: 14, color: colors.textSecondary, marginTop: 4, marginBottom: 16 },
-  section: { fontSize: 13, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.4, marginBottom: 8 },
-  unitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
-  unitChip: { paddingHorizontal: 12, paddingVertical: 8, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 9 },
-  unitChipActive: { borderColor: colors.primary, backgroundColor: '#dbeafe' },
-  unitChipText: { color: colors.textSecondary, fontWeight: '600' },
+  content: { padding: spacing[5], paddingBottom: spacing[10] },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  subtitle: { fontSize: typography.sizes.bodyMedium, color: colors.textSecondary, marginTop: spacing[1], marginBottom: spacing[4] },
+  section: { fontSize: 11, fontWeight: '700', color: colors.textSecondary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: spacing[2] },
+  unitRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[2] },
+  unitChip: { paddingHorizontal: spacing[3], paddingVertical: spacing[2], backgroundColor: colors.surface, borderWidth: 1.5, borderColor: colors.border, borderRadius: radii.md },
+  unitChipActive: { borderColor: colors.primary, backgroundColor: colors.surfaceMuted },
+  unitChipText: { color: colors.textSecondary, fontWeight: '600', fontSize: typography.sizes.body },
   unitChipTextActive: { color: colors.primary },
-  stateRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
-  stateBtn: { flex: 1, minHeight: 42, borderRadius: 10, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface },
-  stateBtnActive: { borderColor: colors.primary, backgroundColor: '#dbeafe' },
-  stateText: { color: colors.textSecondary, fontWeight: '700' },
+  stateRow: { flexDirection: 'row', gap: spacing[2], marginBottom: spacing[4] },
+  stateBtn: { flex: 1, minHeight: 52, borderRadius: radii.md, borderWidth: 1.5, borderColor: colors.border, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface },
+  stateBtnActive: { borderColor: colors.primary, backgroundColor: colors.surfaceMuted },
+  stateText: { color: colors.textSecondary, fontWeight: '700', fontSize: typography.sizes.body },
   stateTextActive: { color: colors.primary },
-  errorText: { color: '#ef4444', marginBottom: 10, marginTop: -2, fontSize: 12 },
-  scanBtn: { alignSelf: 'flex-start', paddingVertical: 6, paddingHorizontal: 12, backgroundColor: '#e0e7ff', borderRadius: 8, marginTop: -10 },
-  scanBtnText: { color: '#4338ca', fontWeight: '600', fontSize: 13 },
+  errorText: { color: colors.danger, marginBottom: spacing[2], marginTop: -2, fontSize: typography.sizes.caption },
+  scanBtn: { alignSelf: 'flex-start', paddingVertical: spacing[2], paddingHorizontal: spacing[3], backgroundColor: colors.surfaceMuted, borderRadius: radii.sm, marginTop: -spacing[2], flexDirection: 'row', gap: spacing[1], alignItems: 'center' },
+  scanBtnText: { color: colors.primary, fontWeight: '600', fontSize: typography.sizes.bodyMedium },
   scannerOverlay: { position: 'absolute', top: 100, left: 0, right: 0, alignItems: 'center' },
-  scannerText: { color: '#fff', fontSize: 16, fontWeight: '700', backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, overflow: 'hidden' },
-  scannerCancelBtn: { position: 'absolute', bottom: 40, alignSelf: 'center', backgroundColor: '#fff', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 30 },
-  scannerCancelText: { color: '#000', fontWeight: 'bold', fontSize: 16 },
+  scannerText: { color: colors.onPrimary, fontSize: typography.sizes.bodyMedium, fontWeight: '700', backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: spacing[4], paddingVertical: spacing[2], borderRadius: radii.pill, overflow: 'hidden' },
+  scannerCancelBtn: { position: 'absolute', bottom: 40, alignSelf: 'center', backgroundColor: colors.surface, paddingHorizontal: spacing[6], paddingVertical: spacing[3], borderRadius: radii.full },
+  scannerCancelText: { color: colors.text, fontWeight: 'bold', fontSize: typography.sizes.bodyMedium },
 });

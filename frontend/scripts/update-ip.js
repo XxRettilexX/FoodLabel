@@ -4,13 +4,44 @@ const path = require('path');
 
 function getLocalIp() {
     const interfaces = os.networkInterfaces();
+    const candidates = [];
+
     for (const name of Object.keys(interfaces)) {
+        const lowerName = name.toLowerCase();
+        // Ignore virtual adapters (WSL, Hyper-V, VirtualBox, VMware, VPN, Loopback)
+        if (
+            lowerName.includes('virtual') ||
+            lowerName.includes('vethernet') ||
+            lowerName.includes('vmware') ||
+            lowerName.includes('wsl') ||
+            lowerName.includes('loopback') ||
+            lowerName.includes('npcap') ||
+            lowerName.includes('bluetooth') ||
+            lowerName.includes('vbox')
+        ) {
+            continue;
+        }
+
         for (const iface of interfaces[name]) {
             if (iface.family === 'IPv4' && !iface.internal) {
-                return iface.address;
+                candidates.push({ name, address: iface.address });
             }
         }
     }
+
+    if (candidates.length > 0) {
+        // Prefer Wi-Fi or Wireless or Ethernet interfaces
+        const preferred = candidates.find(
+            (c) =>
+                c.name.toLowerCase().includes('wi-fi') ||
+                c.name.toLowerCase().includes('wifi') ||
+                c.name.toLowerCase().includes('ethernet') ||
+                c.name.toLowerCase().includes('eth') ||
+                c.name.toLowerCase().includes('wlan')
+        );
+        return preferred ? preferred.address : candidates[0].address;
+    }
+
     return 'localhost';
 }
 
@@ -34,3 +65,4 @@ if (regex.test(content)) {
 
 fs.writeFileSync(envPath, content);
 console.log(`✅ EXPO_PUBLIC_API_URL updated to: ${apiPath}`);
+

@@ -4,7 +4,7 @@ import { useAuthStore } from '../../core/store/useAuthStore';
 import apiClient from '../../core/api/client';
 import { AppButton } from '../../shared/components/AppButton';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
-import { colors, spacing } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 export function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -67,28 +67,29 @@ export function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.lg, justifyContent: 'center', backgroundColor: colors.bg },
-  topBlock: { marginBottom: spacing.lg },
+  container: { flex: 1, padding: spacing[10], justifyContent: 'center', backgroundColor: colors.bg },
+  topBlock: { marginBottom: spacing[8] },
   kicker: {
     color: colors.primary,
     fontWeight: '700',
-    fontSize: 13,
+    fontSize: typography.sizes.label,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
-    marginBottom: 6,
+    marginBottom: spacing[1],
   },
-  title: { fontSize: 30, fontWeight: '800', color: colors.text },
-  subtitle: { marginTop: 8, fontSize: 15, color: colors.textSecondary },
-  formCard: { gap: spacing.sm },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  subtitle: { marginTop: spacing[2], fontSize: typography.sizes.bodyMedium, color: colors.textSecondary },
+  formCard: { gap: spacing[4] },
+  sectionTitle: { fontSize: typography.sizes.heading, fontWeight: '700', color: colors.text, marginBottom: spacing[1] },
   input: {
-    backgroundColor: colors.surfaceMuted,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
-    borderRadius: 12,
-    borderWidth: 1,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing[4],
+    paddingVertical: 14,
+    borderRadius: radii.md,
+    borderWidth: 1.5,
     borderColor: colors.border,
-    fontSize: 15,
+    fontSize: typography.sizes.body,
     color: colors.text,
+    minHeight: 52,
   },
 });

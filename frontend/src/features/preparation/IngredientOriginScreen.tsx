@@ -7,7 +7,7 @@ import { traceabilityApi, ProductionGenealogyResponse } from './api';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
 import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 type RouteProps = RouteProp<PreparationStackParamList, 'IngredientOrigin'>;
 
@@ -31,7 +31,7 @@ export function IngredientOriginScreen({ route }: { route: RouteProps }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <SurfaceCard style={{ marginBottom: 12 }}>
+      <SurfaceCard style={{ marginBottom: spacing[3] }}>
         <Text style={styles.title}>{data.production.name}</Text>
         <Text style={styles.meta}>Righe ingredienti: {data.meta.ingredient_lines_count}</Text>
         <Text style={styles.meta}>Lotti unici: {data.meta.unique_lots_count}</Text>
@@ -53,10 +53,10 @@ export function IngredientOriginScreen({ route }: { route: RouteProps }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 20, paddingBottom: 30 },
-  title: { fontSize: 21, fontWeight: '800', color: colors.text },
-  meta: { marginTop: 4, color: colors.textSecondary, fontSize: 13 },
-  card: { marginBottom: 8 },
-  productName: { fontSize: 15, color: colors.text, fontWeight: '700', marginBottom: 6 },
-  line: { fontSize: 12, color: colors.textSecondary, marginBottom: 3 },
+  content: { padding: spacing[5], paddingBottom: spacing[8] },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text },
+  meta: { marginTop: spacing[1], color: colors.textSecondary, fontSize: typography.sizes.body },
+  card: { marginBottom: spacing[2], padding: spacing[4], gap: spacing[1] },
+  productName: { fontSize: typography.sizes.bodyMedium, color: colors.text, fontWeight: '700', marginBottom: spacing[1] },
+  line: { fontSize: typography.sizes.caption, color: colors.textSecondary },
 });

@@ -6,7 +6,7 @@ import { LotsStackParamList } from './LotsNavigator';
 import { labelsApi } from './api';
 import { AppButton } from '../../shared/components/AppButton';
 import { LoadingScreen } from '../../shared/components/LoadingScreen';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography } from '../../core/theme/tokens';
 
 type NavProps = NativeStackNavigationProp<LotsStackParamList, 'ScanLotLabel'>;
 
@@ -78,10 +78,10 @@ export function LotScannerScreen({ navigation }: { navigation: NavProps }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
-  permissionContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg, padding: 30 },
-  permissionTitle: { fontSize: 20, fontWeight: '700', color: colors.text, marginBottom: 10 },
-  permissionText: { fontSize: 14, color: colors.textSecondary, textAlign: 'center', lineHeight: 20, marginBottom: 20 },
+  permissionContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg, padding: spacing[8] },
+  permissionTitle: { fontSize: typography.sizes.heading, fontWeight: '700', color: colors.text, marginBottom: spacing[3] },
+  permissionText: { fontSize: typography.sizes.body, color: colors.textSecondary, textAlign: 'center', lineHeight: 20, marginBottom: spacing[5] },
   overlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center' },
   frameBorder: { width: 240, height: 240, borderWidth: 3, borderColor: 'rgba(255,255,255,0.7)', borderRadius: 16 },
-  hint: { color: '#fff', fontSize: 14, fontWeight: '600', marginTop: 20, textAlign: 'center', paddingHorizontal: 30, textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 4, textShadowOffset: { width: 0, height: 1 } },
+  hint: { color: '#fff', fontSize: typography.sizes.bodyMedium, fontWeight: '600', marginTop: spacing[5], textAlign: 'center', paddingHorizontal: spacing[8], textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 4, textShadowOffset: { width: 0, height: 1 } },
 });

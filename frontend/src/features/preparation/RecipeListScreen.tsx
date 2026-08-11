@@ -10,7 +10,7 @@ import { ErrorScreen } from '../../shared/components/ErrorScreen';
 import { EmptyState } from '../../shared/components/EmptyState';
 import { SurfaceCard } from '../../shared/components/SurfaceCard';
 import { AppButton } from '../../shared/components/AppButton';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography, radii } from '../../core/theme/tokens';
 
 type NavProps = NativeStackNavigationProp<PreparationStackParamList, 'RecipeList'>;
 
@@ -89,13 +89,13 @@ export function RecipeListScreen({ navigation }: { navigation: NavProps }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg, paddingTop: 16 },
-  title: { fontSize: 28, fontWeight: '800', color: colors.text, paddingHorizontal: 20 },
-  subtitle: { fontSize: 14, color: colors.textSecondary, paddingHorizontal: 20, marginTop: 4, marginBottom: 12 },
-  actionsRow: { flexDirection: 'row', gap: 10, paddingHorizontal: 20, marginBottom: 14 },
-  sectionTitle: { fontSize: 13, fontWeight: '700', color: colors.textSecondary, letterSpacing: 0.4, textTransform: 'uppercase', paddingHorizontal: 20, marginBottom: 8 },
-  listContent: { paddingHorizontal: 20, paddingBottom: 30 },
-  card: { marginBottom: 10 },
-  cardTitle: { fontSize: 16, fontWeight: '800', color: colors.text },
-  cardMeta: { marginTop: 4, fontSize: 12, color: colors.textTertiary },
+  container: { flex: 1, backgroundColor: colors.bg, paddingTop: spacing[4] },
+  title: { fontSize: typography.sizes.display, fontWeight: '800', color: colors.text, paddingHorizontal: spacing[5] },
+  subtitle: { fontSize: typography.sizes.label, color: colors.textSecondary, paddingHorizontal: spacing[5], marginTop: spacing[1], marginBottom: spacing[3] },
+  actionsRow: { flexDirection: 'row', gap: spacing[2], paddingHorizontal: spacing[5], marginBottom: spacing[4] },
+  sectionTitle: { fontSize: 11, fontWeight: '700', color: colors.textSecondary, letterSpacing: 0.5, textTransform: 'uppercase', paddingHorizontal: spacing[5], marginBottom: spacing[2] },
+  listContent: { paddingHorizontal: spacing[5], paddingBottom: spacing[8] },
+  card: { marginBottom: spacing[2], padding: spacing[4], gap: spacing[1] },
+  cardTitle: { fontSize: typography.sizes.heading, fontWeight: '800', color: colors.text },
+  cardMeta: { fontSize: typography.sizes.caption, color: colors.textTertiary },
 });

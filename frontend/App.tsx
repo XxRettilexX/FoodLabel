@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/core/navigation/AppNavigator';
 import { useAuthStore } from './src/core/store/useAuthStore';
 import { ActivityIndicator, View } from 'react-native';
+import { colors } from './src/core/theme/tokens';
 
 export default function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
@@ -16,7 +17,7 @@ export default function App() {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#2563eb" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }

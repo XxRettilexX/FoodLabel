@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors } from '../../core/theme/tokens';
+import { colors, spacing, typography } from '../../core/theme/tokens';
 import { StateIcons, ICON_STROKE, ICON_SIZE } from '../../core/theme/icons';
 import type { LucideIcon } from 'lucide-react-native';
 
@@ -29,19 +29,19 @@ export function EmptyState({
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 24,
+    paddingVertical: spacing[10],
+    paddingHorizontal: spacing[6],
   },
   message: {
-    fontSize: 15,
+    fontSize: typography.sizes.body,
     color: colors.textSecondary,
     fontWeight: '600',
     textAlign: 'center',
-    marginTop: 12,
+    marginTop: spacing[3],
   },
   caption: {
-    marginTop: 6,
-    fontSize: 12,
+    marginTop: spacing[1],
+    fontSize: typography.sizes.caption,
     color: colors.textTertiary,
     textAlign: 'center',
   },
