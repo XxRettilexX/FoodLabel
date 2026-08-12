@@ -71,7 +71,7 @@ separato che funziona anche in **Expo Go**:
   firewall).
 - `src/features/lots/printServerApi.ts` — client che chiama direttamente il print-server sulla
   rete locale (non passa dal backend Laravel). URL configurabile con
-  `EXPO_PUBLIC_PRINT_SERVER_URL` (es. `http://192.168.1.42:3000`) in `frontend/.env`; se non
+  `EXPO_PUBLIC_PRINT_SERVER_URL` (es. `http://192.168.1.60:3000`) in `frontend/.env`; se non
   impostata, prova `http://localhost:3000`.
 - Bottone **"Stampa di prova"** nella schermata Profilo (`src/features/profile/
   ProfileScreen.tsx`) — invia un'etichetta con dati di esempio per verificare in un colpo solo

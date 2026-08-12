@@ -35,7 +35,7 @@ L'iPhone e il PC devono essere sulla **stessa rete Wi-Fi**. Trova l'IP del PC:
 - **Linux**: `ip addr show` e cerca l'IP sull'interfaccia Wi-Fi.
 
 Usa questo IP nella configurazione del frontend (`EXPO_PUBLIC_PRINT_SERVER_URL`, vedi
-`frontend/README.md`), ad esempio `http://192.168.1.42:3000`.
+`frontend/README.md`), ad esempio `http://192.168.1.60:3000`.
 
 ## Endpoint
 

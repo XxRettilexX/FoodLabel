@@ -6,7 +6,7 @@ const DEFAULT_PRINT_SERVER_URL = 'http://localhost:3000';
 /**
  * URL del print-server locale (Node/Express + USB), usato SOLO per test rapidi da PC:
  * il flusso di produzione resta la stampa Bluetooth nativa in src/features/printer.
- * Configurabile via EXPO_PUBLIC_PRINT_SERVER_URL (es. http://192.168.1.42:3000),
+ * Configurabile via EXPO_PUBLIC_PRINT_SERVER_URL (es. http://192.168.1.60:3000),
  * cosi' si puo' cambiare facilmente tra un PC di test e un altro senza ricompilare.
  */
 export function getPrintServerUrl(): string {
